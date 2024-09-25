@@ -13,6 +13,7 @@ public class Student implements Serializable, Identifiable, TextSerializable {
 	private String name;
 	private int age;
 	private String course;
+	
 
 	public Student(int id, String name, int age, String course) {
 		this.id = id;

@@ -1,5 +1,6 @@
 package view;
 
+import java.util.Map;
 import java.util.Scanner;
 
 import model.entities.Student;
@@ -12,13 +13,19 @@ public class View {
 	public View() {
 	}
 
-	public int typeDataAccess() {
+	public String askFilePath() {
+		System.out.println("Introduce la ruta de tu archivo");
+		String filePath=entrada.nextLine();
+		return filePath;
+	}
+	
+	/*public int typeDataAccess() {
 		System.out.println("¿Qué tipo de acceso a datos desea utilizar?\n"
 				+ "1-File\n"
 				+ "2-BBDD");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
-	}
+	}*/
 	
 	public  int objectType() {
 		System.out.println("¿Con qué tipo de objeto desea manejar datos?\n"
@@ -28,14 +35,6 @@ public class View {
 		return opcion;
 	}
 	
-	public  int fileType() {
-		System.out.println("¿Qué tipo de archivos desea manejar inicialmente?\n"
-				+ "1-Archivos de texto"
-				+ "2-Archivos binarios"
-				+ "3-Archivos XML");
-		int opcion = Integer.parseInt(entrada.nextLine());
-		return opcion;
-	}
 	
 	public int dataActions() {
 		
@@ -46,6 +45,7 @@ public class View {
 				+ "4-Escribir un solo objeto"//en el mismo o en otro?
 				+ "5-Modificar un objeto"
 				+ "6-Eliminar un objeto"
+				+ "7-Trasladar los datos a otro archivo"
 				+ "7-Salir");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
@@ -67,37 +67,31 @@ public class View {
 		return opcion;
 	}
 	
-	public String askStudentToWrite() {
-		System.out.println("Introduce el id del objeto que quiere escribir");
+	
+	public String askNewStudent() {
+		System.out.println("Introduce el id: ");
 		int id = Integer.parseInt(entrada.nextLine());
 		
-		System.out.println("Introduce el nombre del objeto que quiere escribir");
+		System.out.println("Introduce el nombre: ");
 		String name = entrada.nextLine();
 		
-		System.out.println("Introduce el nombre del objeto que quiere escribir");
+		System.out.println("Introduce la edad: ");
 		int age = Integer.parseInt(entrada.nextLine());
 		
-		System.out.println("Introduce el nombre del objeto que quiere escribir");
+		System.out.println("Introduce el curso: ");
 		String course = entrada.nextLine();
 		
 		
 		return id+";"+name+";"+age+";"+course;
 	}
 	
-	public String askNewStudent() {
-		System.out.println("Introduce el id del nuevo objeto");
-		int id = Integer.parseInt(entrada.nextLine());
-		
-		System.out.println("Introduce el nombre del del nuevo objeto");
-		String name = entrada.nextLine();
-		
-		System.out.println("Introduce el nombre del del nuevo objeto");
-		int age = Integer.parseInt(entrada.nextLine());
-		
-		System.out.println("Introduce el nombre del del nuevo objeto");
-		String course = entrada.nextLine();
-		
-		
-		return id+";"+name+";"+age+";"+course;
+	public void displayAllObjects(Map<Integer,Student>map) {
+		for(Student student:map.values()) {
+			System.out.println(student);
+		}
+	}
+	
+	public void displayOneObject(Student student) {
+		System.out.println(student);
 	}
 }

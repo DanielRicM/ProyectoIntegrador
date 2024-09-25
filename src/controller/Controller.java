@@ -3,7 +3,6 @@ package controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 
 import view.View;
 import model.interfaces.DataHandler;
@@ -14,54 +13,37 @@ import model.fileio.TextFileHandler;
 import model.fileio.XMLFileHandler;
 import model.factory.StudentFactory;
 
-public class Controller<T> {
+public class Controller {
 
 	private View view;
+	private DataHandler<Student> myaccess;
+	private String filePath;
 
-	public Controller() {
-		view = new View();
+	public Controller(View view) {
+		this.view = view;
 	}
 
-	public void initialize() {
-		int accessOption = view.typeDataAccess();
-
-		switch (accessOption) {
-		case 1:// File
-			int objectOption = view.objectType();
-			handleFileOption(objectOption);
-			break;
-		case 2:// BBDD
-
-			break;
-		default:
-			System.out.println("Opción no válida");
-			break;
-		}
-	}
-
-	public void handleFileOption(int objectOption) {
-		ObjFactory<T> factory = getFactoryByOption(objectOption); // Obtener la fábrica correcta según la opción
-
-
-		DataHandler<T> myaccess;
-		int fileOption = view.fileType();
+	
+	public void run() {
+		getFilePath();
+		String extension=getExtension();
+		
 		
 		try {
-			Properties properties = new Properties();
-			switch (fileOption) {
-			case 1:// Text
-				File file=new File(properties.getProperty("text.file.path"));
-				myaccess = new TextFileHandler<>(file, factory);
+			switch (extension) {
+			case "txt":// Text
+				myaccess = new TextFileHandler<>(new File(view.askFilePath()), factory);
 				handleDataActions(myaccess);
 				break;
-			case 2:
-				File file2=new File(properties.getProperty("binary.file.path"));
-				myaccess = new BinaryFileHandler<>(file2);
+			case "dat"://Binary
+				myaccess = new BinaryFileHandler<>(new File(view.askFilePath()));
 				handleDataActions(myaccess);
 				break;
-			case 3:
-				File file3=new File(properties.getProperty("xml.file.path"));
-				myaccess = new XMLFileHandler<>(file3);
+			case "bin":
+				myaccess = new BinaryFileHandler<>(new File(view.askFilePath()));
+				handleDataActions(myaccess);
+			case "xml"://XML
+				myaccess = new XMLFileHandler<>(new File(view.askFilePath()));
 				handleDataActions(myaccess);
 				break;
 			default:
@@ -71,6 +53,40 @@ public class Controller<T> {
 		} catch (IOException ex) {
 			System.out.println("Error al manejar el archivo: " + ex.getMessage());
 		}
+			
+	}
+	
+	public String getFilePath() {
+		this.filePath=view.askFilePath();
+		return filePath;
+	}
+	
+	
+	
+	
+	public String getExtension() {
+		String[] parts = filePath.split(".");
+
+		switch (parts[1]) {
+		case "txt":
+			return "txt";
+		case "dat":
+			return "dat";
+		case "bin":
+			return "bin";
+		case "xml":
+			return "xml";
+		}
+		return null;
+	}
+
+	public void handleFileOption(int objectOption) {
+		ObjFactory<T> factory = getFactoryByOption(objectOption); // Obtener la fábrica correcta según la opción
+
+
+		
+		
+		
 	}
 
 	private ObjFactory<T> getFactoryByOption(int objectOption) {
@@ -83,31 +99,28 @@ public class Controller<T> {
 		}
 	}
 	
+	
 	@SuppressWarnings("unchecked")
-	public void handleDataActions(DataHandler<T> myaccess) {
+	public void handleDataActions(DataHandler<Student> myaccess) {
 		int dataActionOption= view.dataActions();
 		
 		switch(dataActionOption) {
 		case 1: 
-			Map<Integer,T>map=myaccess.readObjects();
-			System.out.println(map);
+			viewAllObjects();
 			break;
 		case 2:
-			Object object=myaccess.readObject(view.askIdToRead());
-			System.out.println(object);
+			viewOneObject(myaccess);
 			break;
 		case 3:
 			//myaccess.writeObjects();
 			break;
 		case 4:
-			String studentData=view.askStudentToWrite();
-			Student student=new StudentFactory().create(studentData);
-			myaccess.writeObject((T)student);
+			writeOneObject(myaccess);
 			break;
 		case 5:
-			String studentData2=view.askNewStudent();
-			Student student2=new StudentFactory().create(studentData2);
-			myaccess.modifyObject(view.askIdToModify(), (T)student2);
+			int id = view.askIdToModify();
+			Student Student=new InputHandler().getStudentDetails(null);
+			myaccess.modifyObject(id, Student);
 			break;
 		case 6:
 			myaccess.deleteObject(view.askIdToRemove());
@@ -115,7 +128,30 @@ public class Controller<T> {
 		case 7:
 			System.out.println("Has salido del menú");
 			break;
+		case 8:
+			break;
+		default:
+			System.out.println("Opción no válida");
+			break;
 		}
 	}
+
+	private void writeOneObject() {
+		Student Student=new InputHandler().getStudentDetails(null);
+		myaccess.writeObject(Student);
+	}
+
+	private void viewOneObject() {
+		Student object=myaccess.readObject(view.askIdToRead());
+		view.displayOneObject(object);
+	}
+
+	private void viewAllObjects() {
+		Map<Integer,Student>map=myaccess.readObjects();
+		view.displayAllObjects(map);
+	}
+	
+	
+	
 
 }
