@@ -27,13 +27,13 @@ public class View {
 		return opcion;
 	}*/
 	
-	public  int objectType() {
+	/*public  int objectType() {
 		System.out.println("¿Con qué tipo de objeto desea manejar datos?\n"
 				+ "1-Estudiante"
 				+ "2-x");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
-	}
+	}*/
 	
 	
 	public int dataActions() {

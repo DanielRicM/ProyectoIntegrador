@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import view.View;
+
 import model.interfaces.DataHandler;
 import model.entities.Student;
 import model.factory.ObjFactory;
@@ -28,23 +29,20 @@ public class Controller {
 		getFilePath();
 		String extension=getExtension();
 		
-		
 		try {
 			switch (extension) {
 			case "txt":// Text
-				myaccess = new TextFileHandler<>(new File(view.askFilePath()), factory);
-				handleDataActions(myaccess);
+				myaccess = new TextFileHandler<>(new File(view.askFilePath()), new StudentFactory());
+				handleDataActions();
 				break;
 			case "dat"://Binary
-				myaccess = new BinaryFileHandler<>(new File(view.askFilePath()));
-				handleDataActions(myaccess);
-				break;
 			case "bin":
 				myaccess = new BinaryFileHandler<>(new File(view.askFilePath()));
-				handleDataActions(myaccess);
+				handleDataActions();
+				break;
 			case "xml"://XML
 				myaccess = new XMLFileHandler<>(new File(view.askFilePath()));
-				handleDataActions(myaccess);
+				handleDataActions();
 				break;
 			default:
 				System.out.println("Opción no válida");
@@ -62,8 +60,6 @@ public class Controller {
 	}
 	
 	
-	
-	
 	public String getExtension() {
 		String[] parts = filePath.split(".");
 
@@ -79,29 +75,10 @@ public class Controller {
 		}
 		return null;
 	}
-
-	public void handleFileOption(int objectOption) {
-		ObjFactory<T> factory = getFactoryByOption(objectOption); // Obtener la fábrica correcta según la opción
-
-
-		
-		
-		
-	}
-
-	private ObjFactory<T> getFactoryByOption(int objectOption) {
-		switch (objectOption) {
-		case 1:
-			return (ObjFactory<T>)new StudentFactory(); // Fábrica para Student
-		
-		default:
-            throw new IllegalArgumentException("Opción de objeto no válida: " + objectOption);
-		}
-	}
 	
 	
 	@SuppressWarnings("unchecked")
-	public void handleDataActions(DataHandler<Student> myaccess) {
+	public void handleDataActions() {
 		int dataActionOption= view.dataActions();
 		
 		switch(dataActionOption) {
@@ -109,13 +86,13 @@ public class Controller {
 			viewAllObjects();
 			break;
 		case 2:
-			viewOneObject(myaccess);
+			viewOneObject();
 			break;
 		case 3:
 			//myaccess.writeObjects();
 			break;
 		case 4:
-			writeOneObject(myaccess);
+			writeOneObject();
 			break;
 		case 5:
 			int id = view.askIdToModify();
@@ -150,6 +127,18 @@ public class Controller {
 		Map<Integer,Student>map=myaccess.readObjects();
 		view.displayAllObjects(map);
 	}
+	
+	private void modifySingleObject() {
+        int id = view.askIdToModify();
+        try {
+            Student existingStudent = myaccess.readObject(id);
+            Student updatedStudent = inputHandler.getStudentDetails(existingStudent);
+            dataHandler.modifyObject(id, updatedStudent);
+            view.displayMessage("Student updated successfully.");
+        } catch (IllegalArgumentException e) {
+            view.displayMessage("Student not found.");
+        }
+    }
 	
 	
 	
