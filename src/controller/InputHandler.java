@@ -9,10 +9,10 @@ public class InputHandler{
         this.entrada = new Scanner(System.in);
     }
 
-    /*public Student getStudentDetails() {
+    public Student getStudentDetails() {
         return getStudentDetails(null);
     }
-    */
+    
 
     public Student getStudentDetails(Student existingStudent) {
     	System.out.println("Introduce el id: ");

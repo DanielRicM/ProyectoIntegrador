@@ -10,6 +10,7 @@ import model.interfaces.DataHandler;
 import model.entities.Student;
 import model.factory.ObjFactory;
 import model.fileio.BinaryFileHandler;
+import model.fileio.FileHandler;
 import model.fileio.TextFileHandler;
 import model.fileio.XMLFileHandler;
 import model.factory.StudentFactory;
@@ -17,8 +18,9 @@ import model.factory.StudentFactory;
 public class Controller {
 
 	private View view;
-	private DataHandler<Student> myaccess;
+	private FileHandler<Student> myaccess;
 	private String filePath;
+	private InputHandler inputHandler;
 
 	public Controller(View view) {
 		this.view = view;
@@ -89,23 +91,24 @@ public class Controller {
 			viewOneObject();
 			break;
 		case 3:
-			//myaccess.writeObjects();
-			break;
-		case 4:
 			writeOneObject();
 			break;
+		case 4:
+			modifySingleObject();
+			break;
 		case 5:
-			int id = view.askIdToModify();
-			Student Student=new InputHandler().getStudentDetails(null);
-			myaccess.modifyObject(id, Student);
+			myaccess.deleteObject(view.askIdToRemove());
 			break;
 		case 6:
-			myaccess.deleteObject(view.askIdToRemove());
+			//Traslado
 			break;
 		case 7:
 			System.out.println("Has salido del menú");
-			break;
-		case 8:
+			try {
+				myaccess.close();	
+			}catch(IOException e) {
+				System.out.println(e.getMessage());
+			}
 			break;
 		default:
 			System.out.println("Opción no válida");
@@ -133,7 +136,7 @@ public class Controller {
         try {
             Student existingStudent = myaccess.readObject(id);
             Student updatedStudent = inputHandler.getStudentDetails(existingStudent);
-            dataHandler.modifyObject(id, updatedStudent);
+           myaccess.modifyObject(id, updatedStudent);
             view.displayMessage("Student updated successfully.");
         } catch (IllegalArgumentException e) {
             view.displayMessage("Student not found.");
