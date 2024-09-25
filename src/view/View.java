@@ -27,8 +27,9 @@ public class View {
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
 	}
+	
 	public  int fileType() {
-		System.out.println("¿Qué tipo de archivos desea manejar?\n"
+		System.out.println("¿Qué tipo de archivos desea manejar inicialmente?\n"
 				+ "1-Archivos de texto"
 				+ "2-Archivos binarios"
 				+ "3-Archivos XML");
@@ -41,8 +42,8 @@ public class View {
 		System.out.println("¿Qué acción desea realizar?\n"
 				+ "1-Leer todos los objetos"
 				+ "2-Leer un objecto específico"
-				+ "3-Escribir varios objetos"
-				+ "4-Escribir un solo objeto"
+				+ "3-Escribir varios objetos"//en el mismo o en otro?
+				+ "4-Escribir un solo objeto"//en el mismo o en otro?
 				+ "5-Modificar un objeto"
 				+ "6-Eliminar un objeto"
 				+ "7-Salir");

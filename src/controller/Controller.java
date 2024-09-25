@@ -2,6 +2,8 @@ package controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
 
 import view.View;
 import model.interfaces.DataHandler;
@@ -20,13 +22,13 @@ public class Controller<T> {
 		view = new View();
 	}
 
-	public void initialize(File file) {
+	public void initialize() {
 		int accessOption = view.typeDataAccess();
 
 		switch (accessOption) {
 		case 1:// File
 			int objectOption = view.objectType();
-			handleFileOption(file, objectOption);
+			handleFileOption(objectOption);
 			break;
 		case 2:// BBDD
 
@@ -37,7 +39,7 @@ public class Controller<T> {
 		}
 	}
 
-	public void handleFileOption(File file, int objectOption) {
+	public void handleFileOption(int objectOption) {
 		ObjFactory<T> factory = getFactoryByOption(objectOption); // Obtener la fábrica correcta según la opción
 
 
@@ -45,17 +47,21 @@ public class Controller<T> {
 		int fileOption = view.fileType();
 		
 		try {
+			Properties properties = new Properties();
 			switch (fileOption) {
 			case 1:// Text
+				File file=new File(properties.getProperty("text.file.path"));
 				myaccess = new TextFileHandler<>(file, factory);
 				handleDataActions(myaccess);
 				break;
 			case 2:
-				myaccess = new BinaryFileHandler<>(file);
+				File file2=new File(properties.getProperty("binary.file.path"));
+				myaccess = new BinaryFileHandler<>(file2);
 				handleDataActions(myaccess);
 				break;
 			case 3:
-				myaccess = new XMLFileHandler<>(file);
+				File file3=new File(properties.getProperty("xml.file.path"));
+				myaccess = new XMLFileHandler<>(file3);
 				handleDataActions(myaccess);
 				break;
 			default:
@@ -77,20 +83,21 @@ public class Controller<T> {
 		}
 	}
 	
-	//Falta controlar los write dependiendo del tipo que sea el objeto, de momento solo con estudiantes
 	@SuppressWarnings("unchecked")
 	public void handleDataActions(DataHandler<T> myaccess) {
 		int dataActionOption= view.dataActions();
 		
 		switch(dataActionOption) {
 		case 1: 
-			myaccess.readObjects();
+			Map<Integer,T>map=myaccess.readObjects();
+			System.out.println(map);
 			break;
 		case 2:
-			myaccess.readObject(view.askIdToRead());
+			Object object=myaccess.readObject(view.askIdToRead());
+			System.out.println(object);
 			break;
 		case 3:
-			myaccess.writeObjects();
+			//myaccess.writeObjects();
 			break;
 		case 4:
 			String studentData=view.askStudentToWrite();
