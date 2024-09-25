@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 import model.entities.Student;
-import model.interfaces.DataHandler;
 
 public class View {
 	
@@ -39,33 +38,23 @@ public class View {
 	public int dataActions() {
 		
 		System.out.println("¿Qué acción desea realizar?\n"
-				+ "1-Leer todos los objetos"
-				+ "2-Leer un objecto específico"
-				+ "3-Escribir varios objetos"//en el mismo o en otro?
-				+ "4-Escribir un solo objeto"//en el mismo o en otro?
-				+ "5-Modificar un objeto"
-				+ "6-Eliminar un objeto"
-				+ "7-Trasladar los datos a otro archivo"
-				+ "7-Salir");
+				+ "1-Leer todos los objetos\n"
+				+ "2-Leer un objecto específico\n"
+				+ "3-Escribir un objeto\n"
+				+ "4-Modificar un objeto\n"
+				+ "5-Eliminar un objeto\n"
+				+ "6-Trasladar los datos a otro archivo\n"
+				+ "7-Salir\n");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
 	}
 	
-	public int askIdToRead() {
+	public int askId() {
 		System.out.println("Introduce el id del objeto que quiere leer");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
 	}
-	public int askIdToModify() {
-		System.out.println("Introduce el id del objeto que desea modificar");
-		int opcion = Integer.parseInt(entrada.nextLine());
-		return opcion;
-	}
-	public int askIdToRemove() {
-		System.out.println("Introduce el id del objeto que desea eliminar");
-		int opcion = Integer.parseInt(entrada.nextLine());
-		return opcion;
-	}
+	
 	
 	
 	public void displayAllObjects(Map<Integer,Student>map) {
@@ -77,4 +66,7 @@ public class View {
 	public void displayOneObject(Student student) {
 		System.out.println(student);
 	}
+	public void displayMessage(String message) {
+        System.out.println(message);
+    }
 }

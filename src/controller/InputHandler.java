@@ -15,9 +15,6 @@ public class InputHandler{
     
 
     public Student getStudentDetails(Student existingStudent) {
-    	System.out.println("Introduce el id: ");
-		int id = Integer.parseInt(entrada.nextLine());
-		
 		System.out.println("Introduce el nombre: ");
 		String name = entrada.nextLine();
 		
@@ -33,6 +30,8 @@ public class InputHandler{
             existingStudent.setCourse(course);
             return existingStudent;
         } else {
+        	System.out.println("Introduce el id: ");
+    		int id = Integer.parseInt(entrada.nextLine());
             return new Student(id, name, age, course);
         }
     }
