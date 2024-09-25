@@ -68,23 +68,6 @@ public class View {
 	}
 	
 	
-	public String askNewStudent() {
-		System.out.println("Introduce el id: ");
-		int id = Integer.parseInt(entrada.nextLine());
-		
-		System.out.println("Introduce el nombre: ");
-		String name = entrada.nextLine();
-		
-		System.out.println("Introduce la edad: ");
-		int age = Integer.parseInt(entrada.nextLine());
-		
-		System.out.println("Introduce el curso: ");
-		String course = entrada.nextLine();
-		
-		
-		return id+";"+name+";"+age+";"+course;
-	}
-	
 	public void displayAllObjects(Map<Integer,Student>map) {
 		for(Student student:map.values()) {
 			System.out.println(student);
