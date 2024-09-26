@@ -21,6 +21,9 @@ public class BinaryFileHandler<T> extends FileHandler<T> {
 	@Override
 	protected Map<Integer, T> initialReadObjects() throws IOException {
 		Map<Integer, T> objectMap = new HashMap<>();
+		if(file.length()==0) {
+			return objectMap;
+		}
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
 			while (true) {
 				try {

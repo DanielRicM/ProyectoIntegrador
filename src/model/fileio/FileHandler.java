@@ -16,9 +16,12 @@ public abstract class FileHandler<T> implements DataHandler<T>, AutoCloseable {
 	public FileHandler(File file) throws IOException {
 		this.file = file;
 		this.map = new HashMap<>(); // This ensures the map is never null
-		this.map.putAll(initialReadObjects());
 	}
-
+	
+	public void initialize() throws IOException {
+		this.map.putAll(initialReadObjects());
+    }
+	
 	protected abstract Map<Integer, T> initialReadObjects() throws IOException;
 
 	protected abstract void finalWriteObjects() throws IOException;

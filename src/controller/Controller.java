@@ -32,15 +32,18 @@ public class Controller {
 			switch (ext) {
 			case "txt":// Text
 				myaccess = new TextFileHandler<>(new File(filePath), new StudentFactory());
+				myaccess.initialize();
 				handleDataActions();
 				break;
 			case "dat":// Binary
 			case "bin":
 				myaccess = new BinaryFileHandler<>(new File(filePath));
+				myaccess.initialize();
 				handleDataActions();
 				break;
 			case "xml":// XML
 				myaccess = new XMLFileHandler<>(new File(filePath));
+				myaccess.initialize();
 				handleDataActions();
 				break;
 			default:
@@ -103,8 +106,8 @@ public class Controller {
 	}
 
 	private void writeOneObject() {
-		Student Student = new InputHandler().getStudentDetails(null);
-		myaccess.writeObject(Student);
+		Student object = new InputHandler().getStudentDetails(null);
+		myaccess.writeObject(object);
 	}
 
 	private void viewOneObject() {
@@ -121,9 +124,9 @@ public class Controller {
 		int id = view.askId();
 		
 		try {
-			Student existingStudent = myaccess.readObject(id);
-			Student updatedStudent = inputHandler.getStudentDetails(existingStudent);
-			myaccess.modifyObject(id, updatedStudent);
+			Student existingObject = myaccess.readObject(id);
+			Student updatedObject = inputHandler.getStudentDetails(existingObject);
+			myaccess.modifyObject(id, updatedObject);
 			view.displayMessage("Objeto modificado con éxito.");
 		} catch (IllegalArgumentException e) {
 			view.displayMessage("Objeto no encontrado.");
