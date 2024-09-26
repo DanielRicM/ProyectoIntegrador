@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<students>
+  <student id="1">
+    <name>Daniel</name>
+    <age>25</age>
+    <course>DAM2</course>
+  </student>
+  <student id="2">
+    <name>Irene</name>
+    <age>27</age>
+    <course>DAM2</course>
+  </student>
+</students>

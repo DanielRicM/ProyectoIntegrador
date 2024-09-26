@@ -17,9 +17,7 @@ public class Controller {
 
 	private View view;
 	private FileHandler<Student> myaccess;
-	private FileHandler<Student> myaccess2;
 	private String filePath;
-	private String filePath2;
 
 	
 	private InputHandler inputHandler;
@@ -31,33 +29,8 @@ public class Controller {
 
 	public void run() {
 		getFilePath();
-		String ext = getExtension(filePath);
-		try {
-			switch (ext) {
-			case "txt":// Text
-				myaccess = new TextFileHandler<>(new File(filePath), new StudentFactory());
-				myaccess.initialize();
-				handleDataActions();
-				break;
-			case "dat":// Binary
-			case "bin":
-				myaccess = new BinaryFileHandler<>(new File(filePath));
-				myaccess.initialize();
-				handleDataActions();
-				break;
-			case "xml":// XML
-				myaccess = new XMLFileHandler<>(new File(filePath));
-				myaccess.initialize();
-				handleDataActions();
-				break;
-			default:
-				System.out.println("Opción no válida");
-				break;
-			}
-		} catch (IOException ex) {
-			System.out.println("Error al manejar el archivo: " + ex.getMessage());
-		}
-
+		myaccess = createFileHandler(filePath);
+		handleDataActions();
 	}
 
 	public void getFilePath() {
@@ -124,7 +97,6 @@ public class Controller {
 		myaccess.writeObject(object);
 	}
 
-	
 	private void modifySingleObject() {
 		int id = view.askId();
 		
@@ -143,31 +115,34 @@ public class Controller {
 	}
 	
 	private void writeAllObjects() {
-		String secondFilePath=view.askFilePath();
-		menuSecondFile(secondFilePath);
-		Map<Integer,Student> map = myaccess.readObjects();
-		myaccess2.writeObjects(map);
 		try {
+			String secondFilePath=view.askFilePath();
+			FileHandler<Student> myaccess2 = createFileHandler(secondFilePath);
+			Map<Integer,Student> map = myaccess.readObjects();
+			myaccess2.writeObjects(map);
 			myaccess2.close();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
 	}
 	
-	private void menuSecondFile(String filePath) {
-		String ext = getExtension(filePath);
+	private FileHandler<Student> createFileHandler(String filePath) {
+		FileHandler<Student> access;
 		try {
-			switch (ext) {
+			switch (getExtension(filePath)) {
 			case "txt":// Text
-				myaccess2 = new TextFileHandler<>(new File(filePath), new StudentFactory());
-				break;
+				access = new TextFileHandler<>(new File(filePath), new StudentFactory());
+				access.initialize();
+				return access;
 			case "dat":// Binary
 			case "bin":
-				myaccess2 = new BinaryFileHandler<>(new File(filePath));
-				break;
+				access = new BinaryFileHandler<>(new File(filePath));
+				access.initialize();
+				return access;
 			case "xml":// XML
-				myaccess2 = new XMLFileHandler<>(new File(filePath));
-				break;
+				access = new XMLFileHandler<>(new File(filePath));
+				access.initialize();
+				return access;
 			default:
 				System.out.println("Opción no válida");
 				break;
@@ -175,6 +150,7 @@ public class Controller {
 		} catch (IOException ex) {
 			System.out.println("Error al manejar el archivo: " + ex.getMessage());
 		}
+		return null;
 	}
 	
 
