@@ -1,5 +1,8 @@
 package model.factory;
 
+import org.jdom2.Attribute;
+import org.jdom2.Element;
+
 import model.entities.Student;
 
 public class StudentFactory implements ObjFactory<Student> {
@@ -13,5 +16,36 @@ public class StudentFactory implements ObjFactory<Student> {
 		String course = parts[3];
 
 		return new Student(id, name, age, course);
+	}
+
+	@Override
+	public String toCSV(Student student) {
+		return student.getId() + ";" + student.getName() + ";" + student.getAge() + ";" + student.getCourse();
+	}
+
+	@Override
+	public Student create(Element studentElement) {
+		int id = Integer.parseInt(studentElement.getAttributeValue("id"));
+		String name = studentElement.getChildText("name");
+		int age = Integer.parseInt(studentElement.getChildText("age"));
+		String course = studentElement.getChildText("course");
+
+		Student student = new Student(id, name, age, course);
+		return student;
+	}
+
+	@Override
+	public Element toXML(Student student) {
+		Element studentElement = new Element("student");
+		studentElement.setAttribute(new Attribute("id", String.valueOf(student.getId())));
+
+		Element name = new Element("name").setText(student.getName());
+		Element age = new Element("age").setText(String.valueOf(student.getAge()));
+		Element course = new Element("course").setText(student.getCourse());
+
+		studentElement.addContent(name);
+		studentElement.addContent(age);
+		studentElement.addContent(course);
+		return studentElement;
 	}
 }

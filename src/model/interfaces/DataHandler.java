@@ -2,7 +2,7 @@ package model.interfaces;
 
 import java.util.Map;
 
-public interface DataHandler<T> {
+public interface DataHandler<T extends Identifiable> {
 
 	Map<Integer, T> readObjects();
 

@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import view.View;
+import view.ConsoleView;
 
 import model.entities.Student;
 import model.fileio.BinaryFileHandler;
@@ -15,14 +15,12 @@ import model.factory.StudentFactory;
 
 public class Controller {
 
-	private View view;
+	private ConsoleView view;
 	private FileHandler<Student> myaccess;
 	private String filePath;
-
-	
 	private InputHandler inputHandler;
 
-	public Controller(View view) {
+	public Controller(ConsoleView view) {
 		this.view = view;
 		this.inputHandler = new InputHandler();
 	}
@@ -45,7 +43,7 @@ public class Controller {
 	public void handleDataActions() {
 		boolean running = true;
 		while (running) {
-		int dataActionOption = view.dataActions();
+			int dataActionOption = view.dataActions();
 			switch (dataActionOption) {
 			case 1:
 				viewAllObjects();
@@ -81,17 +79,17 @@ public class Controller {
 		}
 
 	}
-	
+
 	private void viewAllObjects() {
 		Map<Integer, Student> map = myaccess.readObjects();
 		view.displayAllObjects(map);
 	}
-	
+
 	private void viewOneObject() {
 		Student object = myaccess.readObject(view.askId());
 		view.displayOneObject(object);
 	}
-	
+
 	private void writeOneObject() {
 		Student object = new InputHandler().getStudentDetails(null);
 		myaccess.writeObject(object);
@@ -99,7 +97,7 @@ public class Controller {
 
 	private void modifySingleObject() {
 		int id = view.askId();
-		
+
 		try {
 			Student existingObject = myaccess.readObject(id);
 			Student updatedObject = inputHandler.getStudentDetails(existingObject);
@@ -109,23 +107,23 @@ public class Controller {
 			view.displayMessage("Objeto no encontrado.");
 		}
 	}
-	
+
 	private void deleteOneObject() {
 		myaccess.deleteObject(view.askId());
 	}
-	
+
 	private void writeAllObjects() {
 		try {
-			String secondFilePath=view.askFilePath();
+			String secondFilePath = view.askFilePath();
 			FileHandler<Student> myaccess2 = createFileHandler(secondFilePath);
-			Map<Integer,Student> map = myaccess.readObjects();
+			Map<Integer, Student> map = myaccess.readObjects();
 			myaccess2.writeObjects(map);
 			myaccess2.close();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
 	private FileHandler<Student> createFileHandler(String filePath) {
 		FileHandler<Student> access;
 		try {
@@ -140,7 +138,7 @@ public class Controller {
 				access.initialize();
 				return access;
 			case "xml":// XML
-				access = new XMLFileHandler<>(new File(filePath));
+				access = new XMLFileHandler<>(new File(filePath), new StudentFactory());
 				access.initialize();
 				return access;
 			default:
@@ -152,13 +150,5 @@ public class Controller {
 		}
 		return null;
 	}
-	
-
-	
-
-	
-	
-
-	
 
 }

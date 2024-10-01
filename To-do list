@@ -13,28 +13,13 @@ To-do:
 	logic, such as extracting the ID and parsing. This would help 
 	keep the TextFileHandler more generic.
 	**develop Identifiable interface** DONE
+	
+- Implement View interface in consoleView
+
+- Make controller generic
+
+- Decide when and how to ask for entity type.
 
 
-- Factory Pattern for Flexibility:
-
-	Implement a factory pattern to handle different object types 
-	(e.g., Student, Car). This will make your handler extensible for 
-	future models and formats.
-
-- Keep initialReadObjects() Returning a Map:
-
-	Keep the initialReadObjects() method returning a Map for better 
-	testability, ensuring modularity and isolation during testing.
 
 
-- Implement Write Options:
-
-	In the writeObjects(Map<Integer, T>) method, consider adding a flag 
-	or an argument to decide whether to overwrite or merge with the current 
-	map.
-
-
-- Handle deleteAll() with Caution:
-
-	If you add a deleteAll() method, implement it carefully with safeguards 
-	(e.g., confirmation prompts) to avoid accidental deletion.

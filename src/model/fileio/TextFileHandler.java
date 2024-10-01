@@ -11,9 +11,8 @@ import java.util.Map;
 
 import model.factory.ObjFactory;
 import model.interfaces.Identifiable;
-import model.interfaces.TextSerializable;
 
-public class TextFileHandler<T> extends FileHandler<T> {
+public class TextFileHandler<T extends Identifiable> extends FileHandler<T> {
 
 	private ObjFactory<T> factory;
 
@@ -29,9 +28,7 @@ public class TextFileHandler<T> extends FileHandler<T> {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				T object = factory.create(line);
-				if (object instanceof Identifiable) {
-					objectMap.put(((Identifiable) object).getId(), object);
-				}
+				objectMap.put(((Identifiable) object).getId(), object);
 			}
 		} catch (IOException e) {
 			throw new IOException("Error reading object from file", e);
@@ -43,12 +40,8 @@ public class TextFileHandler<T> extends FileHandler<T> {
 	protected void finalWriteObjects() throws IOException {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 			for (T object : map.values()) {
-				if (object instanceof TextSerializable) {
-					writer.write(((TextSerializable) object).toText());
-					writer.newLine();
-				} else {
-					throw new IllegalArgumentException("Object does not implement TextSerializable");
-				}
+				writer.write(factory.toCSV(object));
+				writer.newLine();
 			}
 		}
 	}
