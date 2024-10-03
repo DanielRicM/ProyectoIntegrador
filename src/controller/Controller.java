@@ -11,12 +11,13 @@ import model.fileio.BinaryFileHandler;
 import model.fileio.FileHandler;
 import model.fileio.TextFileHandler;
 import model.fileio.XMLFileHandler;
+import model.interfaces.DataHandler;
 import model.factory.StudentFactory;
 
 public class Controller {
 
 	private ConsoleView view;
-	private FileHandler<Student> myaccess;
+	private DataHandler<Student> myaccess;
 	private String filePath;
 	private InputHandler inputHandler;
 

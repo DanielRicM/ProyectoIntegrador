@@ -1,5 +1,6 @@
 package model.bbdd;
 
+import java.io.IOException;
 import java.util.Map;
 import model.interfaces.DataHandler;
 import model.interfaces.Identifiable;
@@ -44,6 +45,12 @@ public  class DDBBHandler<T extends Identifiable> implements DataHandler{
 
 	@Override
 	public void modifyObject(int id, Identifiable newObject) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void close() throws IOException {
 		// TODO Auto-generated method stub
 		
 	}

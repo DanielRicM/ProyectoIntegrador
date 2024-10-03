@@ -1,5 +1,6 @@
 package model.interfaces;
 
+import java.io.IOException;
 import java.util.Map;
 
 public interface DataHandler<T extends Identifiable> {
@@ -15,5 +16,7 @@ public interface DataHandler<T extends Identifiable> {
 	void deleteObject(int id);
 
 	void modifyObject(int id, T newObject);
+	
+	void close() throws IOException;
 
 }
