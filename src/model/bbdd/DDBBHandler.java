@@ -26,7 +26,7 @@ public  class DDBBHandler<T extends Identifiable> implements DataHandler{
 	}
 
 	@Override
-	public void writeObjects(Map map) {
+	public void writeObjects(Map map, boolean overwrite) {
 		// TODO Auto-generated method stub
 		
 	}//??

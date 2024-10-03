@@ -42,10 +42,14 @@ public abstract class FileHandler<T extends Identifiable> implements DataHandler
 	}
 
 	@Override
-	public void writeObjects(Map<Integer, T> map) {
+	public void writeObjects(Map<Integer, T> map, boolean overwrite) {
+		if(overwrite) {
+			this.map = new HashMap<>();
+		}
+		
 		this.map.putAll(map); // May add boolean for overwrite
 	}
-
+	
 	@Override
 	public void writeObject(T object) {
 		if (object instanceof Identifiable) {

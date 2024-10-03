@@ -18,7 +18,7 @@ public class Controller {
 
 	private ConsoleView view;
 	private DataHandler<Student> myaccess;
-	private String filePath;
+	private String filePath; // quitar
 	private InputHandler inputHandler;
 
 	public Controller(ConsoleView view) {
@@ -27,6 +27,10 @@ public class Controller {
 	}
 
 	public void run() {
+		
+		// primero decision de usar file o DB, 
+		// variables filepath y url seran locales para la creacion del acceso
+		
 		getFilePath();
 		myaccess = createFileHandler(filePath);
 		handleDataActions();
@@ -114,11 +118,13 @@ public class Controller {
 	}
 
 	private void writeAllObjects() {
+		// Volver a preguntar por el tipo de acceso entre file y db
 		try {
 			String secondFilePath = view.askFilePath();
-			FileHandler<Student> myaccess2 = createFileHandler(secondFilePath);
+			FileHandler<Student> myaccess2 = createFileHandler(secondFilePath); // Pasar a DataHandler
+			myaccess2.initialize();
 			Map<Integer, Student> map = myaccess.readObjects();
-			myaccess2.writeObjects(map);
+			myaccess2.writeObjects(map, false); // With DDBB, always false (do not overwrite)
 			myaccess2.close();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
@@ -151,5 +157,6 @@ public class Controller {
 		}
 		return null;
 	}
+	// Crear metodo espejo de createFileHandler para DB.
 
 }

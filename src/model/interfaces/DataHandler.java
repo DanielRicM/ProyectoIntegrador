@@ -9,7 +9,7 @@ public interface DataHandler<T extends Identifiable> {
 
 	T readObject(int id);
 
-	void writeObjects(Map<Integer, T> map);
+	void writeObjects(Map<Integer, T> map, boolean overwrite);
 
 	void writeObject(T newObject);
 
