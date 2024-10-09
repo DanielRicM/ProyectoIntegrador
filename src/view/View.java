@@ -1,19 +1,24 @@
 package view;
 
 import java.util.Map;
-import model.interfaces.Identifiable;
+
+import model.entities.Student;
 
 public interface View {
 
+	int askDataAccessType();
+	
 	String askFilePath();
+	
+	String askDatabase();
 
 	int dataActions();
 
 	int askId();
 
-	void displayAllObjects(Map<Integer, ? extends Identifiable> map);
+	void displayAllObjects(Map<Integer, Student> map);
 
-	void displayOneObject(Identifiable object);
+	void displayOneObject(Student object);
 
 	void displayMessage(String message);
 }

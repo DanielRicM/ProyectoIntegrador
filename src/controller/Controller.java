@@ -2,10 +2,11 @@ package controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Map;
 
 import view.ConsoleView;
-
+import model.bbdd.DDBBHandler;
 import model.entities.Student;
 import model.fileio.BinaryFileHandler;
 import model.fileio.FileHandler;
@@ -19,6 +20,7 @@ public class Controller {
 	private ConsoleView view;
 	private DataHandler<Student> myaccess;
 	private String filePath; // quitar
+	private String database;
 	private InputHandler inputHandler;
 
 	public Controller(ConsoleView view) {
@@ -26,18 +28,25 @@ public class Controller {
 		this.inputHandler = new InputHandler();
 	}
 
-	public void run() {
-		
-		// primero decision de usar file o DB, 
-		// variables filepath y url seran locales para la creacion del acceso
-		
-		getFilePath();
-		myaccess = createFileHandler(filePath);
-		handleDataActions();
+	private void selectDataAccess() {
+		int option = view.askDataAccessType();
+		switch(option) {
+		case 1:
+			this.database = view.askDatabase();
+			myaccess = createDDBBHandler(database);
+			break;
+		case 2:
+			this.filePath = view.askFilePath();
+			myaccess = createFileHandler(filePath);
+			break;
+		}
 	}
-
-	public void getFilePath() {
-		this.filePath = view.askFilePath();
+	public void run() {
+		// primero decision de usar file o DB,
+		selectDataAccess();
+		
+		// Una vez decidido, entramos en el flujo principal.
+		handleDataActions();
 	}
 
 	public String getExtension(String filePath) {
@@ -157,6 +166,17 @@ public class Controller {
 		}
 		return null;
 	}
-	// Crear metodo espejo de createFileHandler para DB.
+	
+	
 
+	// Crear metodo espejo de createFileHandler para DB.
+	private DDBBHandler<Student> createDDBBHandler(String database) {
+		try {
+			return new DDBBHandler<Student>(database, new StudentFactory());
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
 }
