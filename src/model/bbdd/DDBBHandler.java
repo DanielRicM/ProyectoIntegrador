@@ -2,21 +2,31 @@ package model.bbdd;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
+
+import model.entities.Student;
+import model.factory.ObjFactory;
 import model.interfaces.DataHandler;
 import model.interfaces.Identifiable;
 
 public class DDBBHandler<T extends Identifiable> implements DataHandler<T>, AutoCloseable {
 
 	private Connection connection;
+	private String table;
+	private ObjFactory<T> factory;
+	
 
-	public DDBBHandler(String database) throws ClassNotFoundException, SQLException {
+	public DDBBHandler(String database,ObjFactory<T> factory) throws ClassNotFoundException, SQLException {
 		this.connection = getConnection(database);
+		this.table="students";
+		this.factory = factory;
 	}
 
 	private Connection getConnection(String database) throws ClassNotFoundException, SQLException {
@@ -34,25 +44,86 @@ public class DDBBHandler<T extends Identifiable> implements DataHandler<T>, Auto
 
 	@Override
 	public Map<Integer, T> readObjects(){
-		return null;
+		Map<Integer,T> map = new HashMap<>();
+		
+		try {
+			String query = "Select * from "+table;
+			Statement stm = connection.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			
+			ResultSetMetaData metaData = rs.getMetaData();
+			int nfields = metaData.getColumnCount();
+			String[]fields = new String[nfields];
+			
+			for (int i=0;i<nfields;i++) {
+				fields[i]=metaData.getColumnName(i+1);
+			}
+			
+			while(rs.next()) {
+				String line=rs.getString(fields[0])+";"+rs.getString(fields[1])+";"+rs.getString(fields[2])+";"+rs.getString(fields[3]);
+				T object= factory.create(line);
+				map.put(((Identifiable)object).getId(), object);
+			}	
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		return  map;
 	}
-
+	
+	
 	@Override
 	public T readObject(int id) {
-		// TODO Auto-generated method stub
+		
+		try {
+			String query="Select * from "+table+" where id="+String.valueOf(id);
+			Statement stm = connection.createStatement();
+			ResultSet rs = stm.executeQuery(query);
+			ResultSetMetaData metaData = rs.getMetaData();
+			int nfields = metaData.getColumnCount();
+			String[]fields = new String[nfields];
+			
+			for (int i=0;i<nfields;i++) {
+				fields[i]=metaData.getColumnName(i+1);
+			}
+		
+			String line=rs.getString(fields[0])+";"+rs.getString(fields[1])+";"+rs.getString(fields[2])+";"+rs.getString(fields[3]);
+			T object= factory.create(line);
+			
+			
+			
+			return object;
+			
+			
+			
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		
 		return null;
 	}
 
 	@Override
 	public void writeObjects(Map<Integer, T> map, boolean overwrite) {
-		// TODO Auto-generated method stub
+		
+		//Hacer metodo en el factory
+		
+		for(T student:map.values()) {
+			Student student2=(Student)student;
+			String query ="Insert into "+table+" values ("+
+			String.valueOf(student2.getId())+ ", '"
+					+student2.getName()+ ", '"
+			+String.valueOf(student2.getAge())
+			+ ", '"+student2.getCourse()+") ";
+		}
+		
 
 	}
 
 	@Override
 	public void writeObject(T newObject) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
