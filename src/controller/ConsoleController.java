@@ -15,7 +15,7 @@ import model.fileio.XMLFileHandler;
 import model.interfaces.DataHandler;
 import model.factory.StudentFactory;
 
-public class Controller {
+public class ConsoleController {
 
 	private ConsoleView view;
 	private DataHandler<Student> myaccess;
@@ -23,7 +23,7 @@ public class Controller {
 	private String database;
 	private InputHandler inputHandler;
 
-	public Controller(ConsoleView view) {
+	public ConsoleController(ConsoleView view) {
 		this.view = view;
 		this.inputHandler = new InputHandler();
 	}
@@ -128,17 +128,33 @@ public class Controller {
 	}
 
 	private void writeAllObjects() {
-		// Volver a preguntar por el tipo de acceso entre file y db
-		try {
-			String secondFilePath = view.askFilePath();
-			FileHandler<Student> myaccess2 = createFileHandler(secondFilePath); // Pasar a DataHandler
-			myaccess2.initialize();
-			Map<Integer, Student> map = myaccess.readObjects();
-			myaccess2.writeObjects(map, false); // With DDBB, always false (do not overwrite)
-			myaccess2.close();
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
+		int option = view.askDataAccessType();
+		switch (option) {
+		case 1:
+			String secondDatabase = view.askDatabase();
+			DDBBHandler<Student> myaccessDDBB = createDDBBHandler(secondDatabase);
+			Map<Integer, Student> mapDDBB = myaccess.readObjects();
+			myaccessDDBB.writeObjects(mapDDBB, false);
+			break;
+		case 2:
+			try {
+				String secondFilePath = view.askFilePath();
+				FileHandler<Student> myaccessFile = createFileHandler(secondFilePath); // Pasar a DataHandler
+				myaccessFile.initialize();
+				Map<Integer, Student> map = myaccess.readObjects();
+				myaccessFile.writeObjects(map, false); // With DDBB, always false (do not overwrite)
+				myaccessFile.close();
+				break;
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			}
+			
 		}
+		
+		
+		
+		
+		
 	}
 
 	private FileHandler<Student> createFileHandler(String filePath) {

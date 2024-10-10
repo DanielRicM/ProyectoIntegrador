@@ -36,8 +36,8 @@ public class DDBBHandler<T extends Identifiable> implements DataHandler<T>, Auto
 		String url = "jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useSSL=false";
 		String username = "root";
 		String password = "root";
+		
 		Class.forName(driver);
-		System.out.println(url);
 		return DriverManager.getConnection(url, username, password);
 
 	}
@@ -77,6 +77,7 @@ public class DDBBHandler<T extends Identifiable> implements DataHandler<T>, Auto
 		try {
 			String query = "Select * from " + table + " where id=" + String.valueOf(id);
 			ResultSet rs = stm.executeQuery(query);
+			rs.next();
 			ResultSetMetaData metaData = rs.getMetaData();
 			int nfields = metaData.getColumnCount();
 			String[] fields = new String[nfields];
@@ -84,7 +85,8 @@ public class DDBBHandler<T extends Identifiable> implements DataHandler<T>, Auto
 			for (int i = 0; i < nfields; i++) {
 				fields[i] = metaData.getColumnName(i + 1);
 			}
-
+			
+			
 			String line = rs.getString(fields[0]) + ";" + rs.getString(fields[1]) + ";" + rs.getString(fields[2]) + ";"
 					+ rs.getString(fields[3]);
 			T object = factory.create(line);
@@ -127,7 +129,7 @@ public class DDBBHandler<T extends Identifiable> implements DataHandler<T>, Auto
 	@Override
 	public void deleteObject(int id) {
 		try {
-			String query = "Delete * from " + table + " where id=" + id;
+			String query = "Delete from " + table + " where id=" + id;
 			stm.executeUpdate(query);
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());

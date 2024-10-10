@@ -14,7 +14,7 @@ public class ConsoleView implements View {
 
 	@Override
 	public int askDataAccessType() {
-		System.out.println("¿Qué tipo de acceso a datos desea utilizar?\n" + "1-File\n" + "2-BBDD");
+		System.out.println("¿Qué tipo de acceso a datos desea utilizar?\n" + "1-BBDD\n" + "2-File");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
 	}
@@ -45,7 +45,7 @@ public class ConsoleView implements View {
 	public int dataActions() {
 		System.out.println("¿Qué acción desea realizar?\n" + "1-Leer todos los objetos\n"
 				+ "2-Leer un objecto específico\n" + "3-Escribir un objeto\n" + "4-Modificar un objeto\n"
-				+ "5-Eliminar un objeto\n" + "6-Trasladar los datos a otro archivo\n" + "7-Salir\n");
+				+ "5-Eliminar un objeto\n" + "6-Trasladar los objetos a otro tipo de acceso a datos\n" + "7-Salir\n");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
 	}

@@ -52,9 +52,9 @@ public class StudentFactory implements ObjFactory<Student> {
 	@Override
 	public String toQuery(Student student) {
 		String queryValues= String.valueOf(student.getId())+ ", '"
-				+student.getName()+ ", '"
+				+student.getName()+ "', "
 		+String.valueOf(student.getAge())
-		+ ", '"+student.getCourse();
+		+ ", '"+student.getCourse()+"'";
 		return queryValues;
 	}
 	
