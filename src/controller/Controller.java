@@ -30,7 +30,7 @@ public class Controller {
 
 	private void selectDataAccess() {
 		int option = view.askDataAccessType();
-		switch(option) {
+		switch (option) {
 		case 1:
 			this.database = view.askDatabase();
 			myaccess = createDDBBHandler(database);
@@ -41,10 +41,11 @@ public class Controller {
 			break;
 		}
 	}
+
 	public void run() {
 		// primero decision de usar file o DB,
 		selectDataAccess();
-		
+
 		// Una vez decidido, entramos en el flujo principal.
 		handleDataActions();
 	}
@@ -166,13 +167,12 @@ public class Controller {
 		}
 		return null;
 	}
-	
-	
 
-	// Crear metodo espejo de createFileHandler para DB.
 	private DDBBHandler<Student> createDDBBHandler(String database) {
+		DDBBHandler<Student> access;
 		try {
-			return new DDBBHandler<Student>(database, new StudentFactory());
+			access = new DDBBHandler<Student>(database, new StudentFactory());
+			return access;
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}

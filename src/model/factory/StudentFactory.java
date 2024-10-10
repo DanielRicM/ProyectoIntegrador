@@ -48,4 +48,20 @@ public class StudentFactory implements ObjFactory<Student> {
 		studentElement.addContent(course);
 		return studentElement;
 	}
+
+	@Override
+	public String toQuery(Student student) {
+		String queryValues= String.valueOf(student.getId())+ ", '"
+				+student.getName()+ ", '"
+		+String.valueOf(student.getAge())
+		+ ", '"+student.getCourse();
+		return queryValues;
+	}
+	
+	public String toUpdateQuery(Student student) {
+        return "UPDATE students SET name = '" + student.getName() + 
+               "', age = " + student.getAge() + 
+               ", course = '" + student.getCourse() + 
+               "'";
+    }
 }

@@ -13,5 +13,9 @@ public interface ObjFactory<T extends Identifiable> {
 	T create(Element rootElement);
 
 	Element toXML(T object);
+	
+	String toQuery(T Object);
+	
+	String toUpdateQuery(T student);
 
 }
