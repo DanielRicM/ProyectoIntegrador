@@ -2,7 +2,6 @@ package model.bbdd;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -15,32 +14,19 @@ import model.factory.ObjFactory;
 import model.interfaces.DataHandler;
 import model.interfaces.Identifiable;
 
-public class DDBBHandler<T extends Identifiable> implements DataHandler<T>, AutoCloseable {
+public abstract class DDBBHandler<T extends Identifiable> implements DataHandler<T>, AutoCloseable {
 
-	private Connection connection;
-	private String table;
-	private ObjFactory<T> factory;
-	private Statement stm;
+	protected Connection connection;
+	protected String table;
+	protected ObjFactory<T> factory;
+	protected Statement stm;
 
 	public DDBBHandler(String database, ObjFactory<T> factory) throws ClassNotFoundException, SQLException {
-		this.connection = getConnection(database);
 		this.table = "students";
 		this.factory = factory;
-		this.stm = connection.createStatement();
 	}
 
-	private Connection getConnection(String database) throws ClassNotFoundException, SQLException {
-		String driver = "com.mysql.cj.jdbc.Driver";
-		String hostname = "localhost";
-		String port = "3306";
-		String url = "jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useSSL=false";
-		String username = "root";
-		String password = "root";
-		
-		Class.forName(driver);
-		return DriverManager.getConnection(url, username, password);
-
-	}
+	protected abstract Connection getConnection(String database) throws ClassNotFoundException, SQLException;
 
 	@Override
 	public Map<Integer, T> readObjects() {

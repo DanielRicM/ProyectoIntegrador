@@ -7,6 +7,8 @@ import java.util.Map;
 
 import view.ConsoleView;
 import model.bbdd.DDBBHandler;
+import model.bbdd.MySQLHandler;
+import model.bbdd.SQLiteHandler;
 import model.entities.Student;
 import model.fileio.BinaryFileHandler;
 import model.fileio.FileHandler;
@@ -19,8 +21,6 @@ public class ConsoleController {
 
 	private ConsoleView view;
 	private DataHandler<Student> myaccess;
-	private String filePath; // quitar
-	private String database;
 	private InputHandler inputHandler;
 
 	public ConsoleController(ConsoleView view) {
@@ -32,12 +32,10 @@ public class ConsoleController {
 		int option = view.askDataAccessType();
 		switch (option) {
 		case 1:
-			this.database = view.askDatabase();
-			myaccess = createDDBBHandler(database);
+			myaccess = createDDBBHandler(view.askDatabase());
 			break;
 		case 2:
-			this.filePath = view.askFilePath();
-			myaccess = createFileHandler(filePath);
+			myaccess = createFileHandler(view.askFilePath());
 			break;
 		}
 	}
@@ -139,14 +137,13 @@ public class ConsoleController {
 			try {
 				String secondFilePath = view.askFilePath();
 				FileHandler<Student> myaccessFile = createFileHandler(secondFilePath); // Pasar a DataHandler
-				//myaccessFile.initialize();
 				Map<Integer, Student> map = myaccess.readObjects();
 				myaccessFile.writeObjects(map, false); // With DDBB, always false (do not overwrite)
 				myaccessFile.close();
 				break;
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
-			}	
+			}
 		}
 	}
 
@@ -176,13 +173,29 @@ public class ConsoleController {
 
 	private DDBBHandler<Student> createDDBBHandler(String database) {
 		DDBBHandler<Student> access;
+		String DataBaseType = getExtension(database);
 		try {
-			access = new DDBBHandler<Student>(database, new StudentFactory());
-			return access;
-		} catch (ClassNotFoundException | SQLException e) {
+			if (DataBaseType.equals(database)) {
+				access = new MySQLHandler<>(database, new StudentFactory());
+				return access;
+			}
+			
+			switch (DataBaseType) {
+			case "db":// Text
+				access = new SQLiteHandler<>(database, new StudentFactory());
+				return access;
+			default:
+				System.out.println("Opción no válida");
+				break;
+			}
+
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
-
 	}
 }
