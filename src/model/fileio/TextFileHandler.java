@@ -19,6 +19,7 @@ public class TextFileHandler<T extends Identifiable> extends FileHandler<T> {
 	public TextFileHandler(File file, ObjFactory<T> factory) throws IOException {
 		super(file);
 		this.factory = factory;
+		this.map.putAll(initialReadObjects());
 	}
 
 	@Override

@@ -92,7 +92,6 @@ public class ConsoleController {
 				break;
 			}
 		}
-
 	}
 
 	private void viewAllObjects() {
@@ -140,21 +139,15 @@ public class ConsoleController {
 			try {
 				String secondFilePath = view.askFilePath();
 				FileHandler<Student> myaccessFile = createFileHandler(secondFilePath); // Pasar a DataHandler
-				myaccessFile.initialize();
+				//myaccessFile.initialize();
 				Map<Integer, Student> map = myaccess.readObjects();
 				myaccessFile.writeObjects(map, false); // With DDBB, always false (do not overwrite)
 				myaccessFile.close();
 				break;
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
-			}
-			
+			}	
 		}
-		
-		
-		
-		
-		
 	}
 
 	private FileHandler<Student> createFileHandler(String filePath) {
@@ -163,16 +156,13 @@ public class ConsoleController {
 			switch (getExtension(filePath)) {
 			case "txt":// Text
 				access = new TextFileHandler<>(new File(filePath), new StudentFactory());
-				access.initialize();
 				return access;
 			case "dat":// Binary
 			case "bin":
 				access = new BinaryFileHandler<>(new File(filePath));
-				access.initialize();
 				return access;
 			case "xml":// XML
 				access = new XMLFileHandler<>(new File(filePath), new StudentFactory());
-				access.initialize();
 				return access;
 			default:
 				System.out.println("Opción no válida");

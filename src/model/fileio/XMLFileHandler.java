@@ -23,6 +23,7 @@ public class XMLFileHandler<T extends Identifiable> extends FileHandler<T> {
 	public XMLFileHandler(File file, ObjFactory<T> factory) throws IOException {
 		super(file);
 		this.factory = factory;
+		this.map.putAll(initialReadObjects());
 	}
 
 	@Override

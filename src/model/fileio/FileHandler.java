@@ -16,12 +16,7 @@ public abstract class FileHandler<T extends Identifiable> implements DataHandler
 	public FileHandler(File file) throws IOException {
 		this.file = file;
 		this.map = new HashMap<>(); // This ensures the map is never null
-		
 	}
-	
-	public void initialize() throws IOException {
-		this.map.putAll(initialReadObjects());
-    }
 	
 	protected abstract Map<Integer, T> initialReadObjects() throws IOException;
 
@@ -46,7 +41,6 @@ public abstract class FileHandler<T extends Identifiable> implements DataHandler
 		if(overwrite) {
 			this.map = new HashMap<>();
 		}
-		
 		this.map.putAll(map); // May add boolean for overwrite
 	}
 	

@@ -16,6 +16,7 @@ public class BinaryFileHandler<T extends Identifiable> extends FileHandler<T> {
 
 	public BinaryFileHandler(File file) throws IOException {
 		super(file);
+		this.map.putAll(initialReadObjects());
 	}
 
 	@Override
