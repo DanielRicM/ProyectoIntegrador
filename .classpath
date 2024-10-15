@@ -7,6 +7,7 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="/ADAT_PruebaXML/libs/jdom-2.0.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/danie/Documents/GitHub/ProyectoIntegrador/connector/mysql-connector-j-8.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ireni/OneDrive/Documentos/GitHub/ProyectoIntegrador/connector/mysql-connector-j-8.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ireni/OneDrive/Documentos/GitHub/ProyectoIntegrador/connector/sqlite-jdbc-3.36.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

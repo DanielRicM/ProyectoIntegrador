@@ -17,7 +17,8 @@ public class SQLiteHandler<T extends Identifiable> extends DDBBHandler<T> {
 
 	@Override
 	protected Connection getConnection(String database) throws ClassNotFoundException, SQLException {
-		String url = "jdbc:mysql:/" + database+ ".db";
+		//Class.forName("org.sqlite.JDBC");
+		String url = "jdbc:sqlite:" + database;
 		return DriverManager.getConnection(url);
 	}
 
