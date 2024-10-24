@@ -9,5 +9,7 @@
 	<classpathentry kind="lib" path="/ADAT_PruebaXML/libs/jdom-2.0.6.jar"/>
 	<classpathentry kind="lib" path="C:/Users/ireni/OneDrive/Documentos/GitHub/ProyectoIntegrador/connector/mysql-connector-j-8.3.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/ireni/OneDrive/Documentos/GitHub/ProyectoIntegrador/connector/sqlite-jdbc-3.36.0.3.jar"/>
+	<classpathentry kind="lib" path="/ADAT_BasketHibernate_2_0/lib/hibernate-commons-annotations-5.1.0.Final.jar"/>
+	<classpathentry kind="lib" path="/ADAT_BasketHibernate_2_0/lib/hibernate-core-5.4.6.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
