@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import view.ConsoleView;
+import model.Hibernate.HibernateHandler;
 import model.bbdd.DDBBHandler;
 import model.bbdd.MySQLHandler;
 import model.bbdd.SQLiteHandler;
@@ -36,6 +37,9 @@ public class ConsoleController {
 			break;
 		case 2:
 			myaccess = createFileHandler(view.askFilePath());
+			break;
+		case 3:
+			myaccess = createHibernateHandler();
 			break;
 		}
 	}
@@ -197,5 +201,9 @@ public class ConsoleController {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	private HibernateHandler<Student> createHibernateHandler(){
+		return new HibernateHandler<Student>();
 	}
 }

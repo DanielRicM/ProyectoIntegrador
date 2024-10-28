@@ -14,7 +14,7 @@ public class ConsoleView implements View {
 
 	@Override
 	public int askDataAccessType() {
-		System.out.println("¿Qué tipo de acceso a datos desea utilizar?\n" + "1-BBDD\n" + "2-File");
+		System.out.println("¿Qué tipo de acceso a datos desea utilizar?\n" + "1-BBDD\n" + "2-File\n" + "3-Hibernate");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
 	}
