@@ -2,10 +2,12 @@ package view;
 
 import java.util.Map;
 
-import model.entities.Student;
+import model.interfaces.Identifiable;
 
 public interface View {
 
+	int askObjectType();
+	
 	int askDataAccessType();
 	
 	String askFilePath();
@@ -16,9 +18,9 @@ public interface View {
 
 	int askId();
 
-	void displayAllObjects(Map<Integer, Student> map);
+	void displayAllObjects(Map<Integer, ? extends Identifiable> map);
 
-	void displayOneObject(Student object);
+	void displayOneObject(Identifiable object);
 
 	void displayMessage(String message);
 }

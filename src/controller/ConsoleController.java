@@ -16,19 +16,31 @@ import model.fileio.FileHandler;
 import model.fileio.TextFileHandler;
 import model.fileio.XMLFileHandler;
 import model.interfaces.DataHandler;
+import model.interfaces.Identifiable;
+import model.factory.ObjFactory;
 import model.factory.StudentFactory;
 
 public class ConsoleController {
 
 	private ConsoleView view;
-	private DataHandler<Student> myaccess;
+	private DataHandler<? extends Identifiable> myaccess;
+	private ObjFactory<? extends Identifiable> factory;
 	private InputHandler inputHandler;
 
 	public ConsoleController(ConsoleView view) {
 		this.view = view;
-		this.inputHandler = new InputHandler();
 	}
 
+	private void selectObjectType() {
+		int option = view.askObjectType();
+		switch (option) {
+		case 1:
+			inputHandler = new StudentInputHandler();
+			factory = new StudentFactory();
+			break;
+		}
+	}
+	
 	private void selectDataAccess() {
 		int option = view.askDataAccessType();
 		switch (option) {
@@ -45,6 +57,9 @@ public class ConsoleController {
 	}
 
 	public void run() {
+		
+		selectObjectType();
+		
 		// primero decision de usar file o DB,
 		selectDataAccess();
 
@@ -97,17 +112,17 @@ public class ConsoleController {
 	}
 
 	private void viewAllObjects() {
-		Map<Integer, Student> map = myaccess.readObjects();
+		Map<Integer, ? extends Identifiable> map = myaccess.readObjects();
 		view.displayAllObjects(map);
 	}
 
 	private void viewOneObject() {
-		Student object = myaccess.readObject(view.askId());
+		Identifiable object = (Identifiable) myaccess.readObject(view.askId());
 		view.displayOneObject(object);
 	}
 
 	private void writeOneObject() {
-		Student object = new InputHandler().getStudentDetails(null);
+		Identifiable object = inputHandler.getDetails(null);
 		myaccess.writeObject(object);
 	}
 
@@ -115,8 +130,8 @@ public class ConsoleController {
 		int id = view.askId();
 
 		try {
-			Student existingObject = myaccess.readObject(id);
-			Student updatedObject = inputHandler.getStudentDetails(existingObject);
+			Identifiable existingObject = (Identifiable) myaccess.readObject(id);
+			Identifiable updatedObject = inputHandler.getDetails(existingObject);
 			myaccess.modifyObject(id, updatedObject);
 			view.displayMessage("Objeto modificado con éxito.");
 		} catch (IllegalArgumentException e) {
@@ -133,15 +148,15 @@ public class ConsoleController {
 		switch (option) {
 		case 1:
 			String secondDatabase = view.askDatabase();
-			DDBBHandler<Student> myaccessDDBB = createDDBBHandler(secondDatabase);
-			Map<Integer, Student> mapDDBB = myaccess.readObjects();
+			DDBBHandler<? extends Identifiable> myaccessDDBB = createDDBBHandler(secondDatabase);
+			Map<Integer, ? extends Identifiable> mapDDBB = myaccess.readObjects();
 			myaccessDDBB.writeObjects(mapDDBB, false);
 			break;
 		case 2:
 			try {
 				String secondFilePath = view.askFilePath();
-				FileHandler<Student> myaccessFile = createFileHandler(secondFilePath); // Pasar a DataHandler
-				Map<Integer, Student> map = myaccess.readObjects();
+				FileHandler<? extends Identifiable> myaccessFile = createFileHandler(secondFilePath); // Pasar a DataHandler
+				Map<Integer, ? extends Identifiable> map = myaccess.readObjects();
 				myaccessFile.writeObjects(map, false); // With DDBB, always false (do not overwrite)
 				myaccessFile.close();
 				break;
@@ -151,19 +166,19 @@ public class ConsoleController {
 		}
 	}
 
-	private FileHandler<Student> createFileHandler(String filePath) {
-		FileHandler<Student> access;
+	private FileHandler<? extends Identifiable> createFileHandler(String filePath) {
+		FileHandler<? extends Identifiable> access;
 		try {
 			switch (getExtension(filePath)) {
 			case "txt":// Text
-				access = new TextFileHandler<>(new File(filePath), new StudentFactory());
+				access = new TextFileHandler<>(new File(filePath), factory);
 				return access;
 			case "dat":// Binary
 			case "bin":
 				access = new BinaryFileHandler<>(new File(filePath));
 				return access;
 			case "xml":// XML
-				access = new XMLFileHandler<>(new File(filePath), new StudentFactory());
+				access = new XMLFileHandler<>(new File(filePath), factory);
 				return access;
 			default:
 				System.out.println("Opción no válida");
@@ -175,18 +190,18 @@ public class ConsoleController {
 		return null;
 	}
 
-	private DDBBHandler<Student> createDDBBHandler(String database) {
-		DDBBHandler<Student> access;
+	private DDBBHandler<? extends Identifiable> createDDBBHandler(String database) {
+		DDBBHandler<? extends Identifiable> access;
 		String DataBaseType = getExtension(database);
 		try {
 			if (DataBaseType.equals(database)) {
-				access = new MySQLHandler<>(database, new StudentFactory());
+				access = new MySQLHandler<>(database, factory);
 				return access;
 			}
 			
 			switch (DataBaseType) {
 			case "db":// Text
-				access = new SQLiteHandler<>(database, new StudentFactory());
+				access = new SQLiteHandler<>(database, factory);
 				return access;
 			default:
 				System.out.println("Opción no válida");
@@ -203,7 +218,7 @@ public class ConsoleController {
 		return null;
 	}
 	
-	private HibernateHandler<Student> createHibernateHandler(){
-		return new HibernateHandler<Student>();
+	private HibernateHandler<? extends Identifiable> createHibernateHandler(){
+		return new HibernateHandler<>();
 	}
 }

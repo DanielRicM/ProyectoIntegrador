@@ -3,7 +3,7 @@ package view;
 import java.util.Map;
 import java.util.Scanner;
 
-import model.entities.Student;
+import model.interfaces.Identifiable;
 
 public class ConsoleView implements View {
 
@@ -12,6 +12,13 @@ public class ConsoleView implements View {
 	public ConsoleView() {
 	}
 
+	@Override
+	public int askObjectType() {
+		System.out.println("¿Qué tipo objeto desea utilizar?\n" + "1-Student\n" + "2-*****\n" + "3-*****");
+		int opcion = Integer.parseInt(entrada.nextLine());
+		return opcion;
+	}
+	
 	@Override
 	public int askDataAccessType() {
 		System.out.println("¿Qué tipo de acceso a datos desea utilizar?\n" + "1-BBDD\n" + "2-File\n" + "3-Hibernate");
@@ -57,15 +64,15 @@ public class ConsoleView implements View {
 		return opcion;
 	}
 
-	public void displayAllObjects(Map<Integer, Student> map) {
-		for (Student student : map.values()) {
-			System.out.println(student);
+	public void displayAllObjects(Map<Integer, ? extends Identifiable> map) {
+		for (Identifiable object : map.values()) {
+			System.out.println(object);
 		}
 	}
 
 	@Override
-	public void displayOneObject(Student student) {
-		System.out.println(student);
+	public void displayOneObject(Identifiable object) {
+		System.out.println(object);
 	}
 
 	@Override
