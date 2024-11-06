@@ -12,23 +12,23 @@ import java.util.Map;
 import model.factory.ObjFactory;
 import model.interfaces.Identifiable;
 
-public class TextFileHandler<T extends Identifiable> extends FileHandler<T> {
+public class TextFileHandler<T extends Identifiable> extends FileHandler<Identifiable> {
 
-	private ObjFactory<T> factory;
+	private ObjFactory<Identifiable> factory;
 
-	public TextFileHandler(File file, ObjFactory<T> factory) throws IOException {
+	public TextFileHandler(File file, ObjFactory<Identifiable> factory) throws IOException {
 		super(file);
 		this.factory = factory;
 		this.map.putAll(initialReadObjects());
 	}
 
 	@Override
-	protected Map<Integer, T> initialReadObjects() throws IOException {
-		Map<Integer, T> objectMap = new HashMap<>();
+	protected Map<Integer, Identifiable> initialReadObjects() throws IOException {
+		Map<Integer, Identifiable> objectMap = new HashMap<>();
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				T object = factory.create(line);
+				Identifiable object = factory.create(line);
 				objectMap.put(((Identifiable) object).getId(), object);
 			}
 		} catch (IOException e) {
@@ -40,7 +40,7 @@ public class TextFileHandler<T extends Identifiable> extends FileHandler<T> {
 	@Override
 	protected void finalWriteObjects() throws IOException {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-			for (T object : map.values()) {
+			for (Identifiable object : map.values()) {
 				writer.write(factory.toCSV(object));
 				writer.newLine();
 			}

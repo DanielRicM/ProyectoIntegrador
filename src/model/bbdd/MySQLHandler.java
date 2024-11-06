@@ -7,10 +7,10 @@ import java.sql.SQLException;
 import model.factory.ObjFactory;
 import model.interfaces.Identifiable;
 
-public class MySQLHandler<T extends Identifiable> extends DDBBHandler<T> {
+public class MySQLHandler<T extends Identifiable> extends DDBBHandler<Identifiable> {
 
-	public MySQLHandler(String database, ObjFactory<T> factory) throws ClassNotFoundException, SQLException {
-		super(database, factory);
+	public MySQLHandler(String database, ObjFactory<Identifiable> factory, String table) throws ClassNotFoundException, SQLException {
+		super(factory, table);
 		this.connection = getConnection(database);
 		this.stm = connection.createStatement();
 	}

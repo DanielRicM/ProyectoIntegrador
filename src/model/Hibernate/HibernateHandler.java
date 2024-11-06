@@ -15,23 +15,25 @@ import org.hibernate.Transaction;
 import model.interfaces.DataHandler;
 import model.interfaces.Identifiable;
 
-public class HibernateHandler<T extends Identifiable> implements DataHandler<T>, Closeable {
+public class HibernateHandler<T extends Identifiable> implements DataHandler<Identifiable>, Closeable {
 
 	private Session session;
+	private String clazz;
 
-	public HibernateHandler() {
+	public HibernateHandler(String clazz) {
+		this.clazz = clazz;
 		HibernateUtil util = new HibernateUtil();
 		session = util.getSession();
 	}
 
 	@Override
-	public Map<Integer, T> readObjects() {
-		Map<Integer, T> map = new HashMap<Integer, T>();
-		TypedQuery<T> q = session.createQuery("from Student");
-		List<T> results = q.getResultList();
-		Iterator<T> iterator = results.iterator();
+	public Map<Integer, Identifiable> readObjects() {
+		Map<Integer, Identifiable> map = new HashMap<Integer, Identifiable>();
+		TypedQuery<Identifiable> q = session.createQuery("from " + clazz);
+		List<Identifiable> results = q.getResultList();
+		Iterator<Identifiable> iterator = results.iterator();
 		while (iterator.hasNext()) {
-			T object = (T) iterator.next();
+			Identifiable object = (Identifiable) iterator.next();
 			map.put(object.getId(), object);
 
 		}
@@ -39,15 +41,15 @@ public class HibernateHandler<T extends Identifiable> implements DataHandler<T>,
 	}
 
 	@Override
-	public T readObject(int id) {
-		TypedQuery<T> q = session.createQuery("from Student where id=" + id);
+	public Identifiable readObject(int id) {
+		TypedQuery<Identifiable> q = session.createQuery("from " + clazz + " where id=" + id);
 		return q.getSingleResult();
 	}
 
 	@Override
-	public void writeObjects(Map<Integer, T> map, boolean overwrite) {
+	public void writeObjects(Map<Integer, Identifiable> map, boolean overwrite) {
 		session.beginTransaction();
-		for(T object: map.values()) {
+		for (Identifiable object : map.values()) {
 			session.save(object);
 		}
 		session.getTransaction().commit();
@@ -55,7 +57,7 @@ public class HibernateHandler<T extends Identifiable> implements DataHandler<T>,
 	}
 
 	@Override
-	public void writeObject(T newObject) {
+	public void writeObject(Identifiable newObject) {
 		Transaction writeTransaction = session.beginTransaction();
 		session.save(newObject);
 		writeTransaction.commit();
@@ -64,13 +66,13 @@ public class HibernateHandler<T extends Identifiable> implements DataHandler<T>,
 	@Override
 	public void deleteObject(int id) {
 		Transaction deleteTransaction = session.beginTransaction();
-		TypedQuery<T> q = session.createQuery("delete from Student where id=" + id);
+		TypedQuery<Identifiable> q = session.createQuery("delete from " + clazz + " where id=" + id);
 		q.executeUpdate();
 		deleteTransaction.commit();
 	}
 
 	@Override
-	public void modifyObject(int id, T newObject) {
+	public void modifyObject(int id, Identifiable newObject) {
 		Transaction modifyTransaction = session.beginTransaction();
 		deleteObject(id);
 		writeObject(newObject);

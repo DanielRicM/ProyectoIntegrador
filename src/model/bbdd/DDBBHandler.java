@@ -9,28 +9,27 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import model.factory.ObjFactory;
 import model.interfaces.DataHandler;
 import model.interfaces.Identifiable;
 
-public abstract class DDBBHandler<T extends Identifiable> implements DataHandler<T>, AutoCloseable {
+public abstract class DDBBHandler<T extends Identifiable> implements DataHandler<Identifiable>, AutoCloseable {
 
 	protected Connection connection;
 	protected String table;
-	protected ObjFactory<T> factory;
+	protected ObjFactory<Identifiable> factory;
 	protected Statement stm;
 
-	public DDBBHandler(String database, ObjFactory<T> factory) throws ClassNotFoundException, SQLException {
-		this.table = "students";
+	public DDBBHandler(ObjFactory<Identifiable> factory, String table) throws ClassNotFoundException, SQLException {
+		this.table = table;
 		this.factory = factory;
 	}
 
 	protected abstract Connection getConnection(String database) throws ClassNotFoundException, SQLException;
 
 	@Override
-	public Map<Integer, T> readObjects() {
-		Map<Integer, T> map = new HashMap<>();
+	public Map<Integer, Identifiable> readObjects() {
+		Map<Integer, Identifiable> map = new HashMap<>();
 
 		try {
 			String query = "Select * from " + table;
@@ -45,10 +44,12 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 			}
 
 			while (rs.next()) {
-				String line = rs.getString(fields[0]) + ";" + rs.getString(fields[1]) + ";" + rs.getString(fields[2])
-						+ ";" + rs.getString(fields[3]);
-				T object = factory.create(line);
-				map.put(((Identifiable) object).getId(), object);
+				String line = "";
+				for (String field : fields) {
+					line.concat(rs.getString(field) + ";");
+				}
+				Identifiable object = factory.create(line);
+				map.put(object.getId(), object);
 			}
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -58,7 +59,7 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 	}
 
 	@Override
-	public T readObject(int id) {
+	public Identifiable readObject(int id) {
 
 		try {
 			String query = "Select * from " + table + " where id=" + String.valueOf(id);
@@ -71,11 +72,12 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 			for (int i = 0; i < nfields; i++) {
 				fields[i] = metaData.getColumnName(i + 1);
 			}
-			
-			
-			String line = rs.getString(fields[0]) + ";" + rs.getString(fields[1]) + ";" + rs.getString(fields[2]) + ";"
-					+ rs.getString(fields[3]);
-			T object = factory.create(line);
+
+			String line = "";
+			for (String field : fields) {
+				line.concat(rs.getString(field) + ";");
+			}
+			Identifiable object = factory.create(line);
 
 			return object;
 
@@ -87,10 +89,10 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 	}
 
 	@Override
-	public void writeObjects(Map<Integer, T> map, boolean overwrite) {
+	public void writeObjects(Map<Integer, Identifiable> map, boolean overwrite) {
 
 		try {
-			for (T Object : map.values()) {
+			for (Identifiable Object : map.values()) {
 				String query = "Insert into " + table + " values (" + factory.toQuery(Object) + ") ";
 				stm.executeUpdate(query);
 			}
@@ -102,7 +104,7 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 	}
 
 	@Override
-	public void writeObject(T newObject) {
+	public void writeObject(Identifiable newObject) {
 		try {
 			String query = "Insert into " + table + " values (" + factory.toQuery(newObject) + ") ";
 			stm.executeUpdate(query);
@@ -124,7 +126,7 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 	}
 
 	@Override
-	public void modifyObject(int id, T newObject) {
+	public void modifyObject(int id, Identifiable newObject) {
 		try {
 			String query = factory.toUpdateQuery(newObject) + " where id= " + id;
 			stm.executeUpdate(query);

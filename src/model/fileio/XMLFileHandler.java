@@ -16,19 +16,19 @@ import org.jdom2.output.XMLOutputter;
 import model.factory.ObjFactory;
 import model.interfaces.Identifiable;
 
-public class XMLFileHandler<T extends Identifiable> extends FileHandler<T> {
+public class XMLFileHandler<T extends Identifiable> extends FileHandler<Identifiable> {
 
-	private ObjFactory<T> factory;
+	private ObjFactory<Identifiable> factory;
 
-	public XMLFileHandler(File file, ObjFactory<T> factory) throws IOException {
+	public XMLFileHandler(File file, ObjFactory<Identifiable> factory) throws IOException {
 		super(file);
 		this.factory = factory;
 		this.map.putAll(initialReadObjects());
 	}
 
 	@Override
-	protected Map<Integer, T> initialReadObjects() throws IOException {
-		Map<Integer, T> studentMap = new HashMap<>();
+	protected Map<Integer, Identifiable> initialReadObjects() throws IOException {
+		Map<Integer, Identifiable> studentMap = new HashMap<>();
 		if (file.length() == 0) {
 			return studentMap;
 		}
@@ -39,7 +39,7 @@ public class XMLFileHandler<T extends Identifiable> extends FileHandler<T> {
 			Element rootElement = document.getRootElement();
 			List<Element> studentList = rootElement.getChildren();
 			for (Element studentElement : studentList) {
-				T object = factory.create(studentElement);
+				Identifiable object = factory.create(studentElement);
 				int id = object.getId();
 				studentMap.put(id, object);
 			}
@@ -55,7 +55,7 @@ public class XMLFileHandler<T extends Identifiable> extends FileHandler<T> {
 		Element rootElement = new Element("objects");
 		Document document = new Document(rootElement);
 
-		for (T object : map.values()) {
+		for (Identifiable object : map.values()) {
 			Element objectElement = factory.toXML(object);
 			rootElement.addContent(objectElement);
 		}

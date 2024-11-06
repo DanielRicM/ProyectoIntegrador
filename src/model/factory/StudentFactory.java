@@ -4,8 +4,9 @@ import org.jdom2.Attribute;
 import org.jdom2.Element;
 
 import model.entities.Student;
+import model.interfaces.Identifiable;
 
-public class StudentFactory implements ObjFactory<Student> {
+public class StudentFactory implements ObjFactory<Identifiable> {
 
 	@Override
 	public Student create(String line) {
@@ -19,7 +20,8 @@ public class StudentFactory implements ObjFactory<Student> {
 	}
 
 	@Override
-	public String toCSV(Student student) {
+	public String toCSV(Identifiable object) {
+		Student student = (Student) object;
 		return student.getId() + ";" + student.getName() + ";" + student.getAge() + ";" + student.getCourse();
 	}
 
@@ -35,7 +37,8 @@ public class StudentFactory implements ObjFactory<Student> {
 	}
 
 	@Override
-	public Element toXML(Student student) {
+	public Element toXML(Identifiable object) {
+		Student student = (Student) object;
 		Element studentElement = new Element("student");
 		studentElement.setAttribute(new Attribute("id", String.valueOf(student.getId())));
 
@@ -50,7 +53,8 @@ public class StudentFactory implements ObjFactory<Student> {
 	}
 
 	@Override
-	public String toQuery(Student student) {
+	public String toQuery(Identifiable object) {
+		Student student = (Student) object;
 		String queryValues= String.valueOf(student.getId())+ ", '"
 				+student.getName()+ "', "
 		+String.valueOf(student.getAge())
@@ -58,7 +62,8 @@ public class StudentFactory implements ObjFactory<Student> {
 		return queryValues;
 	}
 	
-	public String toUpdateQuery(Student student) {
+	public String toUpdateQuery(Identifiable object) {
+		Student student = (Student) object;
         return "UPDATE students SET name = '" + student.getName() + 
                "', age = " + student.getAge() + 
                ", course = '" + student.getCourse() + 

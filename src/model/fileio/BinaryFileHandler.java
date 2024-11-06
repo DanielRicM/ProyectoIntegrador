@@ -12,7 +12,7 @@ import java.util.Map;
 
 import model.interfaces.Identifiable;
 
-public class BinaryFileHandler<T extends Identifiable> extends FileHandler<T> {
+public class BinaryFileHandler<T extends Identifiable> extends FileHandler<Identifiable> {
 
 	public BinaryFileHandler(File file) throws IOException {
 		super(file);
@@ -20,17 +20,16 @@ public class BinaryFileHandler<T extends Identifiable> extends FileHandler<T> {
 	}
 
 	@Override
-	protected Map<Integer, T> initialReadObjects() throws IOException {
-		Map<Integer, T> objectMap = new HashMap<>();
+	protected Map<Integer, Identifiable> initialReadObjects() throws IOException {
+		Map<Integer, Identifiable> objectMap = new HashMap<>();
 		if (file.length() == 0) {
 			return objectMap;
 		}
 		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
 			while (true) {
 				try {
-					@SuppressWarnings("unchecked")
-					T object = (T) ois.readObject();
-					Integer id = ((Identifiable) object).getId();
+					Identifiable object = (Identifiable) ois.readObject();
+					Integer id = object.getId();
 					objectMap.put(id, object);
 				} catch (EOFException e) {
 					break; // End of file reached
@@ -45,7 +44,7 @@ public class BinaryFileHandler<T extends Identifiable> extends FileHandler<T> {
 	@Override
 	protected void finalWriteObjects() throws IOException {
 		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
-			for (T object : map.values()) {
+			for (Identifiable object : map.values()) {
 				oos.writeObject(object);
 			}
 		}

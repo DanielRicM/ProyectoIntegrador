@@ -6,16 +6,16 @@ import model.interfaces.Identifiable;
 
 public interface ObjFactory<T extends Identifiable> {
 
-	T create(String line);
+	Identifiable create(String line);
 
-	String toCSV(T object);
+	String toCSV(Identifiable object);
 
-	T create(Element rootElement);
+	Identifiable create(Element rootElement);
 
-	Element toXML(T object);
+	Element toXML(Identifiable object);
 	
-	String toQuery(T Object);
+	String toQuery(Identifiable Object);
 	
-	String toUpdateQuery(T student);
+	String toUpdateQuery(Identifiable student);
 
 }

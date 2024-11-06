@@ -8,27 +8,27 @@ import java.util.Map;
 import model.interfaces.DataHandler;
 import model.interfaces.Identifiable;
 
-public abstract class FileHandler<T extends Identifiable> implements DataHandler<T>, AutoCloseable {
+public abstract class FileHandler<T extends Identifiable> implements DataHandler<Identifiable>, AutoCloseable {
 
 	protected final File file;
-	protected Map<Integer, T> map;
+	protected Map<Integer, Identifiable> map;
 
 	public FileHandler(File file) throws IOException {
 		this.file = file;
 		this.map = new HashMap<>(); // This ensures the map is never null
 	}
 	
-	protected abstract Map<Integer, T> initialReadObjects() throws IOException;
+	protected abstract Map<Integer, Identifiable> initialReadObjects() throws IOException;
 
 	protected abstract void finalWriteObjects() throws IOException;
 
 	@Override
-	public Map<Integer, T> readObjects() {
+	public Map<Integer, Identifiable> readObjects() {
 		return map;
 	}
 
 	@Override
-	public T readObject(int id) {
+	public Identifiable readObject(int id) {
 		if (map.containsKey(id)) {
 			return map.get(id);
 		} else {
@@ -37,7 +37,7 @@ public abstract class FileHandler<T extends Identifiable> implements DataHandler
 	}
 
 	@Override
-	public void writeObjects(Map<Integer, T> map, boolean overwrite) {
+	public void writeObjects(Map<Integer, Identifiable> map, boolean overwrite) {
 		if(overwrite) {
 			this.map = new HashMap<>();
 		}
@@ -45,7 +45,7 @@ public abstract class FileHandler<T extends Identifiable> implements DataHandler
 	}
 	
 	@Override
-	public void writeObject(T object) {
+	public void writeObject(Identifiable object) {
 		if (object instanceof Identifiable) {
 			Integer id = ((Identifiable) object).getId();
 			map.put(id, object);
@@ -60,7 +60,7 @@ public abstract class FileHandler<T extends Identifiable> implements DataHandler
 	}
 
 	@Override
-	public void modifyObject(int id, T newObject) {
+	public void modifyObject(int id, Identifiable newObject) {
 		if (map.containsKey(id)) {
 			map.put(id, newObject);
 		} else {

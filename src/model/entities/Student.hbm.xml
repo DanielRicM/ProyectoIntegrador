@@ -9,10 +9,13 @@
 			<column name="id" />
 		</id>
 		<property name="name" type="string">
-			<column name="name" not-null="true" />
+			<column name="name" length="50" not-null="true" />
 		</property>
 		<property name="age" type="int">
 			<column name="age" not-null="true" />
+		</property>
+		<property name="course" type="string">
+			<column name="course" length="50" not-null="true" />
 		</property>
 	</class>
 	

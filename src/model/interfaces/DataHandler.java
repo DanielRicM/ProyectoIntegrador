@@ -5,17 +5,17 @@ import java.util.Map;
 
 public interface DataHandler<T extends Identifiable> {
 
-	Map<Integer, T> readObjects();
+	Map<Integer, Identifiable> readObjects();
 
-	T readObject(int id);
+	Identifiable readObject(int id);
 
-	void writeObjects(Map<Integer, T> map, boolean overwrite);
+	void writeObjects(Map<Integer, Identifiable> map, boolean overwrite);
 
-	void writeObject(T newObject);
+	void writeObject(Identifiable newObject);
 
 	void deleteObject(int id);
 
-	void modifyObject(int id, T newObject);
+	void modifyObject(int id, Identifiable newObject);
 	
 	void close() throws IOException;
 

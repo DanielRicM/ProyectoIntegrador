@@ -10,7 +10,6 @@ import model.Hibernate.HibernateHandler;
 import model.bbdd.DDBBHandler;
 import model.bbdd.MySQLHandler;
 import model.bbdd.SQLiteHandler;
-import model.entities.Student;
 import model.fileio.BinaryFileHandler;
 import model.fileio.FileHandler;
 import model.fileio.TextFileHandler;
@@ -23,9 +22,11 @@ import model.factory.StudentFactory;
 public class ConsoleController {
 
 	private ConsoleView view;
-	private DataHandler<? extends Identifiable> myaccess;
-	private ObjFactory<? extends Identifiable> factory;
+	private DataHandler<Identifiable> myaccess;
+	private ObjFactory<Identifiable> factory;
 	private InputHandler inputHandler;
+	private String table;
+	private String clazz;
 
 	public ConsoleController(ConsoleView view) {
 		this.view = view;
@@ -37,6 +38,8 @@ public class ConsoleController {
 		case 1:
 			inputHandler = new StudentInputHandler();
 			factory = new StudentFactory();
+			table = "students";
+			clazz = "Student";
 			break;
 		}
 	}
@@ -112,7 +115,7 @@ public class ConsoleController {
 	}
 
 	private void viewAllObjects() {
-		Map<Integer, ? extends Identifiable> map = myaccess.readObjects();
+		Map<Integer, Identifiable> map = myaccess.readObjects();
 		view.displayAllObjects(map);
 	}
 
@@ -148,15 +151,15 @@ public class ConsoleController {
 		switch (option) {
 		case 1:
 			String secondDatabase = view.askDatabase();
-			DDBBHandler<? extends Identifiable> myaccessDDBB = createDDBBHandler(secondDatabase);
-			Map<Integer, ? extends Identifiable> mapDDBB = myaccess.readObjects();
+			DDBBHandler<Identifiable> myaccessDDBB = createDDBBHandler(secondDatabase);
+			Map<Integer, Identifiable> mapDDBB = myaccess.readObjects();
 			myaccessDDBB.writeObjects(mapDDBB, false);
 			break;
 		case 2:
 			try {
 				String secondFilePath = view.askFilePath();
-				FileHandler<? extends Identifiable> myaccessFile = createFileHandler(secondFilePath); // Pasar a DataHandler
-				Map<Integer, ? extends Identifiable> map = myaccess.readObjects();
+				FileHandler<Identifiable> myaccessFile = createFileHandler(secondFilePath); // Pasar a DataHandler
+				Map<Integer, Identifiable> map = myaccess.readObjects();
 				myaccessFile.writeObjects(map, false); // With DDBB, always false (do not overwrite)
 				myaccessFile.close();
 				break;
@@ -166,8 +169,8 @@ public class ConsoleController {
 		}
 	}
 
-	private FileHandler<? extends Identifiable> createFileHandler(String filePath) {
-		FileHandler<? extends Identifiable> access;
+	private FileHandler<Identifiable> createFileHandler(String filePath) {
+		FileHandler<Identifiable> access;
 		try {
 			switch (getExtension(filePath)) {
 			case "txt":// Text
@@ -190,18 +193,18 @@ public class ConsoleController {
 		return null;
 	}
 
-	private DDBBHandler<? extends Identifiable> createDDBBHandler(String database) {
-		DDBBHandler<? extends Identifiable> access;
+	private DDBBHandler<Identifiable> createDDBBHandler(String database) {
+		DDBBHandler<Identifiable> access;
 		String DataBaseType = getExtension(database);
 		try {
 			if (DataBaseType.equals(database)) {
-				access = new MySQLHandler<>(database, factory);
+				access = new MySQLHandler<>(database, factory, table);
 				return access;
 			}
 			
 			switch (DataBaseType) {
 			case "db":// Text
-				access = new SQLiteHandler<>(database, factory);
+				access = new SQLiteHandler<>(database, factory, table);
 				return access;
 			default:
 				System.out.println("Opción no válida");
@@ -218,7 +221,7 @@ public class ConsoleController {
 		return null;
 	}
 	
-	private HibernateHandler<? extends Identifiable> createHibernateHandler(){
-		return new HibernateHandler<>();
+	private HibernateHandler<Identifiable> createHibernateHandler(){
+		return new HibernateHandler<>(clazz);
 	}
 }
