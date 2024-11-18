@@ -46,7 +46,7 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 			while (rs.next()) {
 				String line = "";
 				for (String field : fields) {
-					line.concat(rs.getString(field) + ";");
+					line = line.concat(rs.getString(field) + ";");
 				}
 				Identifiable object = factory.create(line);
 				map.put(object.getId(), object);
@@ -75,7 +75,7 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 
 			String line = "";
 			for (String field : fields) {
-				line.concat(rs.getString(field) + ";");
+				line = line.concat(rs.getString(field) + ";");
 			}
 			Identifiable object = factory.create(line);
 

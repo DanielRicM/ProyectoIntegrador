@@ -14,14 +14,14 @@ public class ConsoleView implements View {
 
 	@Override
 	public int askObjectType() {
-		System.out.println("¿Qué tipo objeto desea utilizar?\n" + "1-Student\n" + "2-*****\n" + "3-*****");
+		System.out.println("¿Qué tipo objeto desea utilizar?\n" + "1- Student\n" + "2- Song\n" + "");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
 	}
 	
 	@Override
 	public int askDataAccessType() {
-		System.out.println("¿Qué tipo de acceso a datos desea utilizar?\n" + "1-BBDD\n" + "2-File\n" + "3-Hibernate");
+		System.out.println("¿Qué tipo de acceso a datos desea utilizar?\n" + "1- BBDD\n" + "2- File\n" + "3- Hibernate");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
 	}

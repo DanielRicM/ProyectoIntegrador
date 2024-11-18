@@ -155,25 +155,28 @@ public class ConsoleController {
 	}
 
 	private void writeAllObjects() {
+		Map<Integer, Identifiable> map = myaccess.readObjects();
 		int option = view.askDataAccessType();
 		switch (option) {
 		case 1:
 			String secondDatabase = view.askDatabase();
 			DDBBHandler<Identifiable> myaccessDDBB = createDDBBHandler(secondDatabase);
-			Map<Integer, Identifiable> mapDDBB = myaccess.readObjects();
-			myaccessDDBB.writeObjects(mapDDBB, false);
+			myaccessDDBB.writeObjects(map, false);
 			break;
 		case 2:
 			try {
 				String secondFilePath = view.askFilePath();
 				FileHandler<Identifiable> myaccessFile = createFileHandler(secondFilePath); // Pasar a DataHandler
-				Map<Integer, Identifiable> map = myaccess.readObjects();
 				myaccessFile.writeObjects(map, false); // With DDBB, always false (do not overwrite)
-				myaccessFile.close();
-				break;
+				myaccessFile.close();	
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
 			}
+			break;
+		case 3:
+			HibernateHandler<Identifiable> myHibernateAccess = createHibernateHandler();
+			myHibernateAccess.writeObjects(map, false);
+		
 		}
 	}
 
@@ -230,6 +233,7 @@ public class ConsoleController {
 	}
 	
 	private HibernateHandler<Identifiable> createHibernateHandler(){
+		System.out.println("HibernateHandler Created");
 		return new HibernateHandler<>(clazz);
 	}
 }
