@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.hibernate.exception.ConstraintViolationException;
+
 import view.ConsoleView;
 import model.Hibernate.HibernateHandler;
 import model.bbdd.DDBBHandler;
@@ -93,7 +95,7 @@ public class ConsoleController {
 				modifySingleObject();
 				break;
 			case 5:
-				deleteOneObject();
+					deleteOneObject();
 				break;
 			case 6:
 				writeAllObjects();
@@ -126,7 +128,13 @@ public class ConsoleController {
 
 	private void writeOneObject() {
 		Identifiable object = inputHandler.getDetails(null);
-		myaccess.writeObject(object);
+		try {
+			myaccess.writeObject(object);
+		}catch(ConstraintViolationException e) {
+		    System.out.println("Violación de restricción: " + e.getConstraintName());
+		}catch (Exception e) {
+	        System.out.println("Error al guardar el objeto: " + e.getMessage());
+	    }
 	}
 
 	private void modifySingleObject() {
@@ -142,7 +150,7 @@ public class ConsoleController {
 		}
 	}
 
-	private void deleteOneObject() {
+	private void deleteOneObject(){
 		myaccess.deleteObject(view.askId());
 	}
 

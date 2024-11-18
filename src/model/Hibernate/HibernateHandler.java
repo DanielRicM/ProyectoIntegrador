@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 
 import model.interfaces.DataHandler;
 import model.interfaces.Identifiable;
@@ -47,20 +48,20 @@ public class HibernateHandler<T extends Identifiable> implements DataHandler<Ide
 	}
 
 	@Override
-	public void writeObjects(Map<Integer, Identifiable> map, boolean overwrite) {
+	public void writeObjects(Map<Integer, Identifiable> map, boolean overwrite)  {
 		session.beginTransaction();
 		for (Identifiable object : map.values()) {
-			session.save(object);
+				session.save(object);
 		}
 		session.getTransaction().commit();
 
 	}
 
 	@Override
-	public void writeObject(Identifiable newObject) {
+	public void writeObject(Identifiable newObject) throws ConstraintViolationException {
 		Transaction writeTransaction = session.beginTransaction();
-		session.save(newObject);
-		writeTransaction.commit();
+	        session.save(newObject);
+	        writeTransaction.commit();
 	}
 
 	@Override
@@ -74,8 +75,7 @@ public class HibernateHandler<T extends Identifiable> implements DataHandler<Ide
 	@Override
 	public void modifyObject(int id, Identifiable newObject) {
 		Transaction modifyTransaction = session.beginTransaction();
-		deleteObject(id);
-		writeObject(newObject);
+		session.update(newObject);
 		modifyTransaction.commit();
 	}
 
