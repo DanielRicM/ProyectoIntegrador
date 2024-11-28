@@ -68,6 +68,7 @@ public abstract class FileHandler<T extends Identifiable> implements DataHandler
 		}
 	}
 
+	
 	public void close() throws IOException {
 		finalWriteObjects();
 	}

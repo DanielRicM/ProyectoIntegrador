@@ -25,6 +25,9 @@ public class TextFileHandler<T extends Identifiable> extends FileHandler<Identif
 	@Override
 	protected Map<Integer, Identifiable> initialReadObjects() throws IOException {
 		Map<Integer, Identifiable> objectMap = new HashMap<>();
+		if (file.length() == 0) {
+			return objectMap;
+		}
 		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = reader.readLine()) != null) {

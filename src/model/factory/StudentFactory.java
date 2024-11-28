@@ -26,11 +26,11 @@ public class StudentFactory implements ObjFactory<Identifiable> {
 	}
 
 	@Override
-	public Student create(Element studentElement) {
-		int id = Integer.parseInt(studentElement.getAttributeValue("id"));
-		String name = studentElement.getChildText("name");
-		int age = Integer.parseInt(studentElement.getChildText("age"));
-		String course = studentElement.getChildText("course");
+	public Student create(Element rootElement) {
+		int id = Integer.parseInt(rootElement.getAttributeValue("id"));
+		String name = rootElement.getChildText("name");
+		int age = Integer.parseInt(rootElement.getChildText("age"));
+		String course = rootElement.getChildText("course");
 
 		Student student = new Student(id, name, age, course);
 		return student;
@@ -55,18 +55,14 @@ public class StudentFactory implements ObjFactory<Identifiable> {
 	@Override
 	public String toQuery(Identifiable object) {
 		Student student = (Student) object;
-		String queryValues= String.valueOf(student.getId())+ ", '"
-				+student.getName()+ "', "
-		+String.valueOf(student.getAge())
-		+ ", '"+student.getCourse()+"'";
+		String queryValues = String.valueOf(student.getId()) + ", '" + student.getName() + "', "
+				+ String.valueOf(student.getAge()) + ", '" + student.getCourse() + "'";
 		return queryValues;
 	}
-	
+
 	public String toUpdateQuery(Identifiable object) {
 		Student student = (Student) object;
-        return "UPDATE students SET name = '" + student.getName() + 
-               "', age = " + student.getAge() + 
-               ", course = '" + student.getCourse() + 
-               "'";
-    }
+		return "UPDATE students SET name = '" + student.getName() + "', age = " + student.getAge() + ", course = '"
+				+ student.getCourse() + "' WHERE id = " + student.getId();
+	}
 }

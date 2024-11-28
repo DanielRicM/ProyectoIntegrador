@@ -20,6 +20,7 @@ import model.interfaces.DataHandler;
 import model.interfaces.Identifiable;
 import model.factory.ObjFactory;
 import model.factory.StudentFactory;
+import model.factory.SongFactory;
 
 public class ConsoleController {
 
@@ -42,6 +43,12 @@ public class ConsoleController {
 			factory = new StudentFactory();
 			table = "students";
 			clazz = "Student";
+			break;
+		case 2:
+			inputHandler = new SongInputHandler();
+			factory = new SongFactory();
+			table = "songs";
+			clazz = "Song";
 			break;
 		}
 	}
