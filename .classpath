@@ -32,5 +32,8 @@
 	<classpathentry kind="lib" path="lib/jdom-2.0.6-sources.jar"/>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.36.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-j-8.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/json_simple-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/okhttp-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/okio-1.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

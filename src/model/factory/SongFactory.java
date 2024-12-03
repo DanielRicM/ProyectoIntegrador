@@ -2,8 +2,10 @@ package model.factory;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
+import org.json.simple.JSONObject;
 
 import model.entities.Song;
+import model.entities.Student;
 import model.interfaces.Identifiable;
 
 public class SongFactory implements ObjFactory<Identifiable> {
@@ -65,6 +67,32 @@ public class SongFactory implements ObjFactory<Identifiable> {
 		Song song = (Song) object;
 		return "UPDATE songs SET name = '" + song.getName() + "', author = '" + song.getAuthor() + "', album = '"
 				+ song.getAlbum() + "' WHERE id = " + song.getId();
+	}
+	
+	public Song create(JSONObject row) {
+		
+		int id = Integer.parseInt(row.get("id").toString());
+		String name = row.get("name").toString();
+		String author = row.get("author").toString();
+		String album = row.get("album").toString();
+		
+		return new Song(id,name,author,album);
+		
+		
+	}
+
+	@Override
+	public JSONObject toJSONObject(Identifiable object) {
+		JSONObject jsonObject= new JSONObject();
+		
+		Song song = (Song) object;
+		
+		jsonObject.put("id",song.getId());
+		jsonObject.put("name",song.getName());
+		jsonObject.put("author", song.getAuthor());
+		jsonObject.put("album", song.getAlbum());
+		
+		return jsonObject;
 	}
 
 }

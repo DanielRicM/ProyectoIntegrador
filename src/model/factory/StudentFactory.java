@@ -2,6 +2,7 @@ package model.factory;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
+import org.json.simple.JSONObject;
 
 import model.entities.Student;
 import model.interfaces.Identifiable;
@@ -64,5 +65,29 @@ public class StudentFactory implements ObjFactory<Identifiable> {
 		Student student = (Student) object;
 		return "UPDATE students SET name = '" + student.getName() + "', age = " + student.getAge() + ", course = '"
 				+ student.getCourse() + "' WHERE id = " + student.getId();
+	}
+	
+	public Student create(JSONObject row) {
+		
+		int id = Integer.parseInt(row.get("id").toString());
+		String name = row.get("name").toString();
+		int age = Integer.parseInt(row.get("age").toString());
+		String course = row.get("course").toString();
+		
+		return new Student(id,name,age,course);
+	}
+
+	@Override
+	public JSONObject toJSONObject(Identifiable object) {
+		JSONObject jsonObject= new JSONObject();
+		
+		Student student = (Student) object;
+		
+		jsonObject.put("id",student.getId());
+		jsonObject.put("name",student.getName());
+		jsonObject.put("age", student.getAge());
+		jsonObject.put("course", student.getCourse());
+		
+		return jsonObject;
 	}
 }
