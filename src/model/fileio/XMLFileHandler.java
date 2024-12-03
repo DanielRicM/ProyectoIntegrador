@@ -28,26 +28,26 @@ public class XMLFileHandler<T extends Identifiable> extends FileHandler<Identifi
 
 	@Override
 	protected Map<Integer, Identifiable> initialReadObjects() throws IOException {
-		Map<Integer, Identifiable> studentMap = new HashMap<>();
+		Map<Integer, Identifiable> objectMap = new HashMap<>();
 		if (file.length() == 0) {
-			return studentMap;
+			return objectMap;
 		}
 
 		try {
 			SAXBuilder saxBuilder = new SAXBuilder();
 			Document document = saxBuilder.build(file);
 			Element rootElement = document.getRootElement();
-			List<Element> studentList = rootElement.getChildren();
-			for (Element studentElement : studentList) {
-				Identifiable object = factory.create(studentElement);
+			List<Element> objectList = rootElement.getChildren();
+			for (Element objectElement : objectList) {
+				Identifiable object = factory.create(objectElement);
 				int id = object.getId();
-				studentMap.put(id, object);
+				objectMap.put(id, object);
 			}
 
 		} catch (Exception e) {
 			throw new IOException("Error parsing XML file", e);
 		}
-		return studentMap;
+		return objectMap;
 	}
 
 	@Override

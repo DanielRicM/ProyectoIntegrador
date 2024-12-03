@@ -35,53 +35,53 @@ public class ConsoleController {
 		this.view = view;
 	}
 
-	private void selectObjectType() {
-		int option = view.askObjectType();
-		switch (option) {
-		case 1:
-			inputHandler = new StudentInputHandler();
-			factory = new StudentFactory();
-			table = "students";
-			clazz = "Student";
-			break;
-		case 2:
-			inputHandler = new SongInputHandler();
-			factory = new SongFactory();
-			table = "songs";
-			clazz = "Song";
-			break;
-		}
-	}
-	
-	private void selectDataAccess() {
-		int option = view.askDataAccessType();
-		switch (option) {
-		case 1:
-			myaccess = createDDBBHandler(view.askDatabase());
-			break;
-		case 2:
-			myaccess = createFileHandler(view.askFilePath());
-			break;
-		case 3:
-			myaccess = createHibernateHandler();
-			break;
-		}
-	}
-
 	public void run() {
-		
 		selectObjectType();
-		
-		// primero decision de usar file o DB,
+
 		selectDataAccess();
 
-		// Una vez decidido, entramos en el flujo principal.
 		handleDataActions();
 	}
 
-	public String getExtension(String filePath) {
-		String[] parts = filePath.split("\\.");
-		return parts[parts.length - 1];
+	private void selectObjectType() {
+		while (true) {
+			int option = view.askObjectType();
+			switch (option) {
+			case 1:
+				inputHandler = new StudentInputHandler();
+				factory = new StudentFactory();
+				table = "students";
+				clazz = "Student";
+				return;
+			case 2:
+				inputHandler = new SongInputHandler();
+				factory = new SongFactory();
+				table = "songs";
+				clazz = "Song";
+				return;
+			default:
+				view.optionNotValid();
+			}
+		}
+	}
+
+	private void selectDataAccess() {
+		while (true) {
+			int option = view.askDataAccessType();
+			switch (option) {
+			case 1:
+				myaccess = createDDBBHandler(view.askDatabase());
+				return;
+			case 2:
+				myaccess = createFileHandler(view.askFilePath());
+				return;
+			case 3:
+				myaccess = createHibernateHandler();
+				return;
+			default:
+				view.optionNotValid();
+			}
+		}
 	}
 
 	public void handleDataActions() {
@@ -102,7 +102,7 @@ public class ConsoleController {
 				modifySingleObject();
 				break;
 			case 5:
-					deleteOneObject();
+				deleteOneObject();
 				break;
 			case 6:
 				writeAllObjects();
@@ -111,13 +111,13 @@ public class ConsoleController {
 				try {
 					myaccess.close();
 				} catch (IOException e) {
-					System.out.println(e.getMessage());
+					view.displayMessage("Error closing the access: " + e.getMessage());
 				}
-				System.out.println("Has salido del menú");
+				System.out.println("Exiting...");
 				running = false;
 				break;
 			default:
-				System.out.println("Opción no válida");
+				view.optionNotValid();
 				break;
 			}
 		}
@@ -137,11 +137,11 @@ public class ConsoleController {
 		Identifiable object = inputHandler.getDetails(null);
 		try {
 			myaccess.writeObject(object);
-		}catch(ConstraintViolationException e) {
-		    System.out.println("Violación de restricción: " + e.getConstraintName());
-		}catch (Exception e) {
-	        System.out.println("Error al guardar el objeto: " + e.getMessage());
-	    }
+		} catch (ConstraintViolationException e) {
+			System.out.println("Constraint violation: " + e.getConstraintName());
+		} catch (Exception e) {
+			System.out.println("Error saving the object: " + e.getMessage());
+		}
 	}
 
 	private void modifySingleObject() {
@@ -151,13 +151,13 @@ public class ConsoleController {
 			Identifiable existingObject = (Identifiable) myaccess.readObject(id);
 			Identifiable updatedObject = inputHandler.getDetails(existingObject);
 			myaccess.modifyObject(id, updatedObject);
-			view.displayMessage("Objeto modificado con éxito.");
+			view.displayMessage("Update successful.");
 		} catch (IllegalArgumentException e) {
-			view.displayMessage("Objeto no encontrado.");
+			view.displayMessage("Object not found.");
 		}
 	}
 
-	private void deleteOneObject(){
+	private void deleteOneObject() {
 		myaccess.deleteObject(view.askId());
 	}
 
@@ -175,7 +175,7 @@ public class ConsoleController {
 				String secondFilePath = view.askFilePath();
 				FileHandler<Identifiable> myaccessFile = createFileHandler(secondFilePath); // Pasar a DataHandler
 				myaccessFile.writeObjects(map, false); // With DDBB, always false (do not overwrite)
-				myaccessFile.close();	
+				myaccessFile.close();
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
 			}
@@ -183,8 +183,13 @@ public class ConsoleController {
 		case 3:
 			HibernateHandler<Identifiable> myHibernateAccess = createHibernateHandler();
 			myHibernateAccess.writeObjects(map, false);
-		
+
 		}
+	}
+
+	public String getExtension(String filePath) {
+		String[] parts = filePath.split("\\.");
+		return parts[parts.length - 1];
 	}
 
 	private FileHandler<Identifiable> createFileHandler(String filePath) {
@@ -202,11 +207,11 @@ public class ConsoleController {
 				access = new XMLFileHandler<>(new File(filePath), factory);
 				return access;
 			default:
-				System.out.println("Opción no válida");
+				view.optionNotValid();
 				break;
 			}
 		} catch (IOException ex) {
-			System.out.println("Error al manejar el archivo: " + ex.getMessage());
+			view.displayMessage("Error handling file: " + ex.getMessage());
 		}
 		return null;
 	}
@@ -219,28 +224,24 @@ public class ConsoleController {
 				access = new MySQLHandler<>(database, factory, table);
 				return access;
 			}
-			
-			switch (DataBaseType) {
-			case "db":// Text
+			switch (DataBaseType) { // En un futuro se implementarán otras based de datos
+			case "db":
 				access = new SQLiteHandler<>(database, factory, table);
 				return access;
 			default:
-				System.out.println("Opción no válida");
-				break;
+				view.optionNotValid();
 			}
+		} catch (ClassNotFoundException cnfe) {
+			view.displayMessage("Database class error" + cnfe);
 
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (SQLException sqle) {
+			view.displayMessage("Database error" + sqle);
 		}
 		return null;
 	}
-	
-	private HibernateHandler<Identifiable> createHibernateHandler(){
-		System.out.println("HibernateHandler Created");
+
+	private HibernateHandler<Identifiable> createHibernateHandler() {
+		view.displayMessage("HibernateHandler Created");
 		return new HibernateHandler<>(clazz);
 	}
 }

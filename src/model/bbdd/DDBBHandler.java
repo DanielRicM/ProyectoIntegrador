@@ -84,7 +84,6 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
-
 		return null;
 	}
 
@@ -93,7 +92,7 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 
 		try {
 			for (Identifiable Object : map.values()) {
-				String query = "Insert into " + table + " values (" + factory.toQuery(Object) + ") ";
+				String query = "Insert into " + table + " values (" + factory.toQuery(Object) + ")";
 				stm.executeUpdate(query);
 			}
 
@@ -146,7 +145,7 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 				connection.close();
 			}
 		} catch (SQLException e) {
-			System.out.println(e.getMessage()); // Capturar cualquier error de SQL al intentar cerrar
+			System.out.println(e.getMessage());
 		}
 
 	}
