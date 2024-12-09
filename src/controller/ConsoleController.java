@@ -9,6 +9,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import view.ConsoleView;
 import model.Hibernate.HibernateHandler;
+import model.JSONPHP.JSONPHPHandler;
 import model.bbdd.DDBBHandler;
 import model.bbdd.MySQLHandler;
 import model.bbdd.SQLiteHandler;
@@ -77,6 +78,9 @@ public class ConsoleController {
 				return;
 			case 3:
 				myaccess = createHibernateHandler();
+				return;
+			case 4:
+				myaccess = createJSONPHPHandler();
 				return;
 			default:
 				view.optionNotValid();
@@ -243,5 +247,10 @@ public class ConsoleController {
 	private HibernateHandler<Identifiable> createHibernateHandler() {
 		view.displayMessage("HibernateHandler Created");
 		return new HibernateHandler<>(clazz);
+	}
+	
+	private JSONPHPHandler<Identifiable> createJSONPHPHandler() {
+		view.displayMessage("JSONPHPHandler Created");
+		return new JSONPHPHandler<>(table,factory);
 	}
 }

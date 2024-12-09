@@ -1,25 +1,7 @@
 To-do:
 
-- Add Confirmation for Changes:
-
-	Modify the close() method to ask for confirmation before 
-	writing changes to the file. Consider using a boolean flag 
-	to track whether changes should be saved.
-	
-
-- Student Plugin for Handling ID:  
-
-	Create a StudentHandler (or similar) to manage Student-specific 
-	logic, such as extracting the ID and parsing. This would help 
-	keep the TextFileHandler more generic.
-	**develop Identifiable interface** DONE
-	
-- Implement View interface in consoleView
-
-- Make controller generic
-
-- Decide when and how to ask for entity type.
-
+- Escribir uno modificarlo en el servidor 
+- Modificar apirequest para delete
 
 
 

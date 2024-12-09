@@ -17,15 +17,13 @@ import model.interfaces.Identifiable;
 public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Identifiable>, Closeable {
 
 	private ApiRequests requests;
-	private String url;
 	private String table;
-	private String clazz;
 	private ObjFactory<Identifiable> factory;
+	private static final String SERVER_PATH = "http://localhost/Irene/adat/";
 
-	public JSONPHPHandler(String table, String clazz, ObjFactory<Identifiable> factory) {
+	public JSONPHPHandler(String table,ObjFactory<Identifiable> factory) {
 		requests = new ApiRequests();
 		this.table = table;
-		this.clazz = clazz;
 		this.factory = factory;
 	}
 
@@ -34,14 +32,13 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 		Map<Integer, Identifiable> map = new HashMap<>();
 
 		try {
-			String url = SERVER_PATH + GET_ + table.toUpperCase();
+			String url = SERVER_PATH + table + ".php";
 
 			String response = requests.getRequest(url);
 			JSONObject answer = (JSONObject) JSONValue.parse(response.toString());
 
 			if (answer == null) {
 				System.out.println("El json recibido no es correcto. Finaliza la ejecución");
-				System.exit(-1);
 			} else {
 				String state = (String) answer.get("estado");
 				if (state.equals("ok")) {
@@ -86,69 +83,95 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 
 	@Override
 	public Identifiable readObject(int id) {
-		// TODO Auto-generated method stub
+
+		try {
+			String url = SERVER_PATH + table + ".php/" + String.valueOf(id);
+
+			String response = requests.getRequest(url);
+			JSONObject answer = (JSONObject) JSONValue.parse(response.toString());
+
+			if (answer == null) {
+				System.out.println("El json recibido no es correcto. Finaliza la ejecución");
+			} else {
+				String state = (String) answer.get("estado");
+				if (state.equals("ok")) {
+					JSONArray array = (JSONArray) answer.get(table);// GENERALIZAR raiz
+
+					if (array.size() > 0) {
+						for (int i = 0; i < array.size(); i++) {
+							JSONObject row = (JSONObject) array.get(i);
+							Identifiable newObject = factory.create(row);
+						}
+
+						System.out.println("Acceso JSON Remoto - Leidos datos correctamente y generado hashmap");
+						System.out.println();
+
+					} else { // El array de jugadores est� vac�o
+						System.out.println("Acceso JSON Remoto - No hay datos que tratar");
+						System.out.println();
+					}
+
+				} else { // Hemos recibido el json pero en el estado se nos
+					// indica que ha habido alg�n error
+
+					System.out.println("Ha ocurrido un error en la busqueda de datos");
+					System.out.println("Error: " + (String) answer.get("error"));
+					System.out.println("Consulta: " + (String) answer.get("query"));
+
+					System.exit(-1);
+
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println("Ha ocurrido un error en la busqueda de datos");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
 		return null;
 	}
 
 	@Override
 	public void writeObjects(Map<Integer, Identifiable> map, boolean overwrite) {
-		
-		for(Identifiable newObject : map.values()) {
-			try {
-				JSONObject object= factory.toJSONObject(newObject);
-				JSONObject objPetition = new JSONObject();
-	;
 
-				// Tenemos el jugador como objeto JSON. Lo a�adimos a una peticion
-				// Lo transformamos a string y llamamos al
-				// encargado de peticiones para que lo envie al PHP
+		JSONArray list = new JSONArray();
 
-				objPetition.put("peticion", "add");
-				objPetition.put("objectAdd", object);
-				
-				String json = objPetition.toJSONString();
+		for (Identifiable newObject : map.values()) {
+			JSONObject object = factory.toJSONObject(newObject);
+			list.add(object);
+		}
 
-				String url = SERVER_PATH + SET_PLAYER;
+		JSONObject objPetition = new JSONObject();
+		objPetition.put("peticion", "add");
+		objPetition.put("objectAdd", list);
 
-				//System.exit(-1);
+		String json = objPetition.toJSONString();
+		System.out.println(json);
+		String url = SERVER_PATH + table + ".php";
 
-				String response = requests.postRequest(url, json);
-				
-				
+		String response;
+		try {
+			response = requests.postRequest(url, json);
+			JSONObject respuesta = (JSONObject) JSONValue.parse(response.toString());
+			if (respuesta == null) {
+				System.out.println("El json recibido no es correcto. Finaliza la ejecución");
+			} else {
 
-				JSONObject respuesta = (JSONObject) JSONValue.parse(response.toString());
+				String estado = (String) respuesta.get("estado");
+				if (estado.equals("ok")) {
+					System.out.println("Almacenado estudiante enviado por JSON Remoto");
 
-				if (respuesta == null) { // Si hay alg�n error de parseo (json
-											// incorrecto porque hay alg�n caracter
-											// raro, etc.) la respuesta ser� null
-					System.out.println("El json recibido no es correcto. Finaliza la ejecuci�n");
-					System.exit(-1);
-				} else { // El JSON recibido es correcto
-					
-					// Sera "ok" si todo ha ido bien o "error" si hay alg�n problema
-					String estado = (String) respuesta.get("estado"); 
-					if (estado.equals("ok")) {
+				} else {
 
-						System.out.println("Almacenado jugador enviado por JSON Remoto");
+					System.out.println("Acceso JSON REMOTO - Error al almacenar los datos");
+					System.out.println("Error: " + (String) respuesta.get("error"));
+					System.out.println("Consulta: " + (String) respuesta.get("query"));
 
-					} else { // Hemos recibido el json pero en el estado se nos
-								// indica que ha habido alg�n error
-
-						System.out.println("Acceso JSON REMOTO - Error al almacenar los datos");
-						System.out.println("Error: " + (String) respuesta.get("error"));
-						System.out.println("Consulta: " + (String) respuesta.get("query"));
-
-						System.exit(-1);
-
-					}
 				}
-			} catch (Exception e) {
-				System.out.println(
-						"Excepcion desconocida. Traza de error comentada en el m�todo 'annadirJugador' de la clase JSON REMOTO");
-				// e.printStackTrace();
-				System.out.println("Fin ejecuci�n");
-				System.exit(-1);
 			}
+		} catch (IOException e) {
+			System.out.println(e);
 		}
 
 	}
@@ -156,26 +179,20 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 	@Override
 	public void writeObject(Identifiable newObject) {
 		try {
-			JSONObject object= factory.toJSONObject(newObject);
+			JSONArray list = new JSONArray();
+			JSONObject object = factory.toJSONObject(newObject);
 			JSONObject objPetition = new JSONObject();
-;
-
-			// Tenemos el jugador como objeto JSON. Lo a�adimos a una peticion
-			// Lo transformamos a string y llamamos al
-			// encargado de peticiones para que lo envie al PHP
+			list.add(object);
 
 			objPetition.put("peticion", "add");
-			objPetition.put("objectAdd", object);
-			
+			objPetition.put("objectAdd",list);
+
 			String json = objPetition.toJSONString();
+			System.out.println(json);
+			String url = SERVER_PATH + table + ".php";
 
-			String url = SERVER_PATH + SET_PLAYER;
-
-			//System.exit(-1);
 
 			String response = requests.postRequest(url, json);
-			
-			
 
 			JSONObject respuesta = (JSONObject) JSONValue.parse(response.toString());
 
@@ -183,11 +200,10 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 										// incorrecto porque hay alg�n caracter
 										// raro, etc.) la respuesta ser� null
 				System.out.println("El json recibido no es correcto. Finaliza la ejecuci�n");
-				System.exit(-1);
 			} else { // El JSON recibido es correcto
-				
+
 				// Sera "ok" si todo ha ido bien o "error" si hay alg�n problema
-				String estado = (String) respuesta.get("estado"); 
+				String estado = (String) respuesta.get("estado");
 				if (estado.equals("ok")) {
 
 					System.out.println("Almacenado jugador enviado por JSON Remoto");
@@ -199,23 +215,16 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 					System.out.println("Error: " + (String) respuesta.get("error"));
 					System.out.println("Consulta: " + (String) respuesta.get("query"));
 
-					System.exit(-1);
-
 				}
 			}
 		} catch (Exception e) {
-			System.out.println(
-					"Excepcion desconocida. Traza de error comentada en el m�todo 'annadirJugador' de la clase JSON REMOTO");
-			// e.printStackTrace();
-			System.out.println("Fin ejecuci�n");
-			System.exit(-1);
+			System.out.println(e);
 		}
 
 	}
 
 	@Override
 	public void deleteObject(int id) {
-		// TODO Auto-generated method stub
 
 	}
 
