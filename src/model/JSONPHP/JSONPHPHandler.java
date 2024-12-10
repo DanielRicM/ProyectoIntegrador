@@ -19,7 +19,7 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 	private ApiRequests requests;
 	private String table;
 	private ObjFactory<Identifiable> factory;
-	private static final String SERVER_PATH = "http://localhost/Irene/adat/";
+	private static final String SERVER_PATH = "http://localhost/Irene/ProjectJSONServer/";
 
 	public JSONPHPHandler(String table,ObjFactory<Identifiable> factory) {
 		requests = new ApiRequests();
@@ -42,13 +42,12 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 			} else {
 				String state = (String) answer.get("estado");
 				if (state.equals("ok")) {
-					JSONArray array = (JSONArray) answer.get(table);// GENERALIZAR raiz
+					JSONArray array = (JSONArray) answer.get(table);
 
 					if (array.size() > 0) {
 						for (int i = 0; i < array.size(); i++) {
 							JSONObject row = (JSONObject) array.get(i);
 							Identifiable newObject = factory.create(row);
-
 							map.put(newObject.getId(), newObject);
 						}
 
@@ -67,15 +66,11 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 					System.out.println("Error: " + (String) answer.get("error"));
 					System.out.println("Consulta: " + (String) answer.get("query"));
 
-					System.exit(-1);
-
 				}
 			}
 
 		} catch (Exception e) {
 			System.out.println("Ha ocurrido un error en la busqueda de datos");
-			e.printStackTrace();
-			System.exit(-1);
 		}
 
 		return map;
@@ -147,7 +142,6 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 		objPetition.put("objectAdd", list);
 
 		String json = objPetition.toJSONString();
-		System.out.println(json);
 		String url = SERVER_PATH + table + ".php";
 
 		String response;
@@ -157,11 +151,9 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 			if (respuesta == null) {
 				System.out.println("El json recibido no es correcto. Finaliza la ejecución");
 			} else {
-
 				String estado = (String) respuesta.get("estado");
 				if (estado.equals("ok")) {
 					System.out.println("Almacenado estudiante enviado por JSON Remoto");
-
 				} else {
 
 					System.out.println("Acceso JSON REMOTO - Error al almacenar los datos");
@@ -188,17 +180,13 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 			objPetition.put("objectAdd",list);
 
 			String json = objPetition.toJSONString();
-			System.out.println(json);
 			String url = SERVER_PATH + table + ".php";
-
 
 			String response = requests.postRequest(url, json);
 
 			JSONObject respuesta = (JSONObject) JSONValue.parse(response.toString());
 
-			if (respuesta == null) { // Si hay alg�n error de parseo (json
-										// incorrecto porque hay alg�n caracter
-										// raro, etc.) la respuesta ser� null
+			if (respuesta == null) {
 				System.out.println("El json recibido no es correcto. Finaliza la ejecuci�n");
 			} else { // El JSON recibido es correcto
 
