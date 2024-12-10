@@ -21,7 +21,7 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 	private ObjFactory<Identifiable> factory;
 	private static final String SERVER_PATH = "http://localhost/Irene/ProjectJSONServer/";
 
-	public JSONPHPHandler(String table,ObjFactory<Identifiable> factory) {
+	public JSONPHPHandler(String table, ObjFactory<Identifiable> factory) {
 		requests = new ApiRequests();
 		this.table = table;
 		this.factory = factory;
@@ -78,9 +78,9 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 
 	@Override
 	public Identifiable readObject(int id) {
-
+		Identifiable newObject;
 		try {
-			String url = SERVER_PATH + table + ".php/" + String.valueOf(id);
+			String url = SERVER_PATH + table + ".php?id=" + String.valueOf(id);
 
 			String response = requests.getRequest(url);
 			JSONObject answer = (JSONObject) JSONValue.parse(response.toString());
@@ -93,27 +93,20 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 					JSONArray array = (JSONArray) answer.get(table);// GENERALIZAR raiz
 
 					if (array.size() > 0) {
-						for (int i = 0; i < array.size(); i++) {
-							JSONObject row = (JSONObject) array.get(i);
-							Identifiable newObject = factory.create(row);
-						}
+						JSONObject row = (JSONObject) array.get(0);
+						newObject = factory.create(row);
+						return newObject;
 
-						System.out.println("Acceso JSON Remoto - Leidos datos correctamente y generado hashmap");
-						System.out.println();
-
-					} else { // El array de jugadores est� vac�o
+					} else {
 						System.out.println("Acceso JSON Remoto - No hay datos que tratar");
 						System.out.println();
 					}
 
-				} else { // Hemos recibido el json pero en el estado se nos
-					// indica que ha habido alg�n error
+				} else {
 
 					System.out.println("Ha ocurrido un error en la busqueda de datos");
 					System.out.println("Error: " + (String) answer.get("error"));
 					System.out.println("Consulta: " + (String) answer.get("query"));
-
-					System.exit(-1);
 
 				}
 			}
@@ -121,7 +114,6 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 		} catch (Exception e) {
 			System.out.println("Ha ocurrido un error en la busqueda de datos");
 			e.printStackTrace();
-			System.exit(-1);
 		}
 
 		return null;
@@ -147,6 +139,7 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 		String response;
 		try {
 			response = requests.postRequest(url, json);
+			System.out.println(response);
 			JSONObject respuesta = (JSONObject) JSONValue.parse(response.toString());
 			if (respuesta == null) {
 				System.out.println("El json recibido no es correcto. Finaliza la ejecución");
@@ -177,13 +170,13 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 			list.add(object);
 
 			objPetition.put("peticion", "add");
-			objPetition.put("objectAdd",list);
+			objPetition.put("objectAdd", list);
 
 			String json = objPetition.toJSONString();
 			String url = SERVER_PATH + table + ".php";
-
+			System.out.println(json);
 			String response = requests.postRequest(url, json);
-
+			System.out.println(response);
 			JSONObject respuesta = (JSONObject) JSONValue.parse(response.toString());
 
 			if (respuesta == null) {
@@ -213,12 +206,65 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 
 	@Override
 	public void deleteObject(int id) {
+		Identifiable newObject;
+		try {
+			String url = SERVER_PATH + table + ".php?id=" + String.valueOf(id);
 
+			String response = requests.deleteRequest(url);
+			JSONObject answer = (JSONObject) JSONValue.parse(response.toString());
+
+			if (answer == null) {
+				System.out.println("El json recibido no es correcto. Finaliza la ejecución");
+			} else {
+				String state = (String) answer.get("estado");
+				if (state.equals("ok")) {
+					System.out.println("El json recibido es correcto. Objeto eliminado");
+				} else {
+					System.out.println("Acceso JSON Remoto - No hay datos que tratar");
+					System.out.println();
+				}
+			}
+
+		} catch (Exception e) {
+			System.out.println("Ha ocurrido un error en la busqueda de datos");
+		}
 	}
 
 	@Override
 	public void modifyObject(int id, Identifiable newObject) {
-		// TODO Auto-generated method stub
+		try {
+			JSONArray list = new JSONArray();
+			JSONObject object = factory.toJSONObject(newObject);
+			JSONObject objPetition = new JSONObject();
+			list.add(object);
+
+			objPetition.put("peticion", "add");
+			objPetition.put("objectAdd", list);
+
+			String json = objPetition.toJSONString();
+			String url = SERVER_PATH + table + ".php?id="+String.valueOf(id);
+			String response = requests.putRequest(url, json);
+			JSONObject respuesta = (JSONObject) JSONValue.parse(response.toString());
+
+			if (respuesta == null) {
+				System.out.println("El json recibido no es correcto. Finaliza la ejecuci�n");
+			} else {
+				String estado = (String) respuesta.get("estado");
+				if (estado.equals("ok")) {
+
+					System.out.println("Almacenado jugador enviado por JSON Remoto");
+
+				} else {
+
+					System.out.println("Acceso JSON REMOTO - Error al almacenar los datos");
+					System.out.println("Error: " + (String) respuesta.get("error"));
+					System.out.println("Consulta: " + (String) respuesta.get("query"));
+
+				}
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 
 	}
 
