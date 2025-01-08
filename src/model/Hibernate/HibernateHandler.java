@@ -49,12 +49,11 @@ public class HibernateHandler<T extends Identifiable> implements DataHandler<Ide
 
 	@Override
 	public void writeObjects(Map<Integer, Identifiable> map, boolean overwrite)  {
-		session.beginTransaction();
+		Transaction writeTransaction = session.beginTransaction();
 		for (Identifiable object : map.values()) {
-			System.out.println(object.toString());
 			session.save(object);
 		}
-		session.getTransaction().commit();
+		writeTransaction.commit();
 
 	}
 

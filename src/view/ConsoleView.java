@@ -22,7 +22,7 @@ public class ConsoleView implements View {
 
 	@Override
 	public int askDataAccessType() {
-		System.out.println("Select a data access type:\n" + "1- Database\n" + "2- File\n" + "3- Hibernate\n"+"4- Client/Server");
+		System.out.println("Select a data access type:\n" + "1- Database\n" + "2- File\n" + "3- Hibernate\n"+"4- Client/Server\n"+"5 - OODB");
 		System.out.print("Option: ");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
