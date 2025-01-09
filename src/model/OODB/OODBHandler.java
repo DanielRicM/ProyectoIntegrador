@@ -25,7 +25,7 @@ public class OODBHandler <T extends Identifiable> implements DataHandler<Identif
     @Override
     public Map<Integer, Identifiable> readObjects() {
         Map<Integer, Identifiable> map = new HashMap<Integer, Identifiable>();
-        TypedQuery<Identifiable> q = em.createQuery("from " + clazz,Identifiable.class);//Te pide que lo castees para que sepas que es identifiable, sino se puede evitar con identifiable.class
+        TypedQuery<Identifiable> q = em.createQuery("Select c from " + clazz + " c ", Identifiable.class);//Te pide que lo castees para que sepas que es identifiable, sino se puede evitar con identifiable.class
         List<Identifiable> results = q.getResultList();
         Iterator<Identifiable> iterator = results.iterator();
         while (iterator.hasNext()) {
@@ -37,7 +37,7 @@ public class OODBHandler <T extends Identifiable> implements DataHandler<Identif
 
     @Override
     public Identifiable readObject(int id) {
-        TypedQuery<Identifiable> q = em.createQuery("from " + clazz + " where id=" + id, Identifiable.class);
+        TypedQuery<Identifiable> q = em.createQuery("Select c from " + clazz + " c where id=" + id, Identifiable.class);
         return q.getSingleResult();
     }
 
@@ -45,7 +45,7 @@ public class OODBHandler <T extends Identifiable> implements DataHandler<Identif
     public void writeObjects(Map<Integer, Identifiable> map, boolean overwrite) {
         em.getTransaction().begin();
         for (Identifiable object : map.values()) {
-            em.persist(object);
+            em.merge(object);
         }
         em.getTransaction().commit();
     }

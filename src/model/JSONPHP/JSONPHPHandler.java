@@ -176,7 +176,6 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 			String url = SERVER_PATH + table + ".php";
 			System.out.println(json);
 			String response = requests.postRequest(url, json);
-			System.out.println(response);
 			JSONObject respuesta = (JSONObject) JSONValue.parse(response.toString());
 
 			if (respuesta == null) {
