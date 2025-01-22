@@ -12,6 +12,7 @@ import org.basex.core.cmd.XQuery;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,29 +22,29 @@ import java.util.Map;
 
 public class BaseXHandler<T extends Identifiable> implements DataHandler<Identifiable>, Closeable {
 
-    Context context;
-    String clazz;
-    ObjFactory<Identifiable> factory;
-    File file;
+    private Context context;
+    private String clazz;
+    private ObjFactory<Identifiable> factory;
 
-    public BaseXHandler(String clazz, ObjFactory<Identifiable> factory){
-        try{
+    public BaseXHandler(String clazz, ObjFactory<Identifiable> factory) {
+        try {
             context = new Context();
             this.clazz = clazz;
             this.factory = factory;
             openDB();
         } catch (BaseXException e) {
-            try{
+            try {
                 createDB();
             } catch (BaseXException ex) {
                 //TODO
+                System.out.println(ex);
             }
         }
     }
 
     private void createDB() throws BaseXException {
-        file = new File(clazz+".xml");
-        new CreateDB(clazz, clazz+".xml").execute(context);
+        String path = "./files/"+clazz+".xml";
+        new CreateDB(clazz, path).execute(context);
     }
 
     private void openDB() throws BaseXException {
@@ -53,9 +54,10 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
     @Override
     public Map<Integer, Identifiable> readObjects() {
         Map<Integer, Identifiable> objectMap = new HashMap<>();
-        try{
-            String query = "//"+clazz;
+        try {
+            String query = "//" + clazz;
             String result = new XQuery(query).execute(context);
+
             InputStream fichero = new ByteArrayInputStream(result.getBytes());
             SAXBuilder saxBuilder = new SAXBuilder();
             Document document = saxBuilder.build(fichero);
@@ -63,42 +65,81 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
 
             List<Element> nodeList = rootElement.getChildren();
 
-            for(Element objectElement : nodeList){
+            for (Element objectElement : nodeList) {
+                System.out.println(objectElement);
                 Identifiable object = factory.create(objectElement);
                 int id = object.getId();
                 objectMap.put(id, object);
             }
-        } catch(Exception e) {
-            //TODO
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return objectMap;
     }
 
     @Override
     public Identifiable readObject(int id) {
-        //TODO
-        return null;
+        try {
+            String query = "//" + clazz + "[@id=" + id + "]";
+            String result = new XQuery(query).execute(context);
+            InputStream fichero = new ByteArrayInputStream(result.getBytes());
+            SAXBuilder saxBuilder = new SAXBuilder();
+            Document document = saxBuilder.build(fichero);
+            Element rootElement = document.getRootElement();
+            return factory.create(rootElement);
+        } catch (Exception e) {
+            System.out.println("Error Basex readOne"+e);
+            return null;
+        }
     }
 
     @Override
     public void writeObjects(Map<Integer, Identifiable> map, boolean overwrite) {
-        Element rootElement = new Element("objects");
-        Document document = new Document(rootElement);
-        
+        try {
+            XMLOutputter xmlOut = new XMLOutputter();
+            for (Identifiable object : map.values()) {
+                Element objectElement = factory.toXML(object);
+                String formatted = xmlOut.outputString(objectElement);
+                new XQuery("insert node " + formatted + " into /objects").execute(context);
+            }
+        } catch (BaseXException e) {
+            System.out.println("Error Basex writeAll"+e);
+        }
     }
 
     @Override
     public void writeObject(Identifiable newObject) {
-
+        try {
+            XMLOutputter xmlOut = new XMLOutputter();
+            Element objectElement = factory.toXML(newObject);
+            String formatted = xmlOut.outputString(objectElement);
+            new XQuery("insert node " + formatted + " into /objects").execute(context);
+        } catch (BaseXException e) {
+            System.out.println("Error Basex writeOne"+e);
+        }
     }
 
     @Override
     public void deleteObject(int id) {
+        try {
+            new XQuery("delete node //" + clazz + "[@id=" + id + "]").execute(context);
+        } catch (BaseXException e) {
+            System.out.println("Error Basex delete"+e);
+        }
 
     }
 
     @Override
     public void modifyObject(int id, Identifiable newObject) {
+        try {
+            XMLOutputter xmlOut = new XMLOutputter();
+            Element objectElement = factory.toXML(newObject);
+            String formatted = xmlOut.outputString(objectElement);
+            new XQuery("replace node //" + clazz + "[@id=" + id + "] with " + formatted).execute(context);
+        } catch (BaseXException e) {
+            System.out.println("Error Basex modify"+e);
+        }
+
 
     }
 

@@ -55,7 +55,7 @@ public class SongInputHandler implements InputHandler {
 
 		int id = 0;
 		while (id == 0) {
-			System.out.println("Enter the id: ");
+			System.out.print("Enter the id: ");
 			String idInput = entrada.nextLine();
 			try {
 				id = Integer.parseInt(idInput);

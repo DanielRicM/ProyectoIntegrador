@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import model.OODB.OODBHandler;
+import model.basex.BaseXHandler;
+import org.basex.BaseX;
 import org.hibernate.exception.ConstraintViolationException;
 
 import view.ConsoleView;
@@ -86,6 +88,9 @@ public class ConsoleController {
                 case 5:
                     myaccess = createOODBHandler();
                     return;
+                case 6:
+                    myaccess = createBaseXHandler();
+                    return;
                 default:
                     view.optionNotValid();
             }
@@ -146,9 +151,9 @@ public class ConsoleController {
         try {
             myaccess.writeObject(object);
         } catch (ConstraintViolationException e) {
-            System.out.println("Constraint violation: " + e.getConstraintName());
+            view.displayMessage("Constraint violation: " + e.getConstraintName());
         } catch (Exception e) {
-            System.out.println("Error saving the object: " + e.getMessage());
+            view.displayMessage("Error saving the object: " + e.getMessage());
         }
     }
 
@@ -270,5 +275,10 @@ public class ConsoleController {
     private OODBHandler<Identifiable> createOODBHandler() {
         view.displayMessage("OODBHandler Created");
         return new OODBHandler<>(clazz);
+    }
+    private BaseXHandler<Identifiable> createBaseXHandler(){
+        File file = new File("./files/"+clazz+".xml");
+        view.displayMessage("BaseXHandler Created");
+        return new BaseXHandler<>(clazz, factory);
     }
 }

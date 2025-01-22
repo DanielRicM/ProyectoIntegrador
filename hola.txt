@@ -1,3 +1,0 @@
-1000;pepe;23;dam
-1;pepe;56;asfvre
-2;Carlos;21;daw

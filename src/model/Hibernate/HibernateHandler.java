@@ -54,7 +54,6 @@ public class HibernateHandler<T extends Identifiable> implements DataHandler<Ide
 			session.save(object);
 		}
 		writeTransaction.commit();
-
 	}
 
 	@Override

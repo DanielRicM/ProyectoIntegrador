@@ -14,7 +14,7 @@ public class ConsoleView implements View {
 
 	@Override
 	public int askObjectType() {
-		System.out.println("Select an Object type:\n" + "1- Student\n" + "2- Song\n" + "");
+		System.out.println("Select an Object type:\n" + "1- Student\n" + "2- Song\n");
 		System.out.print("Option: ");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
@@ -22,7 +22,7 @@ public class ConsoleView implements View {
 
 	@Override
 	public int askDataAccessType() {
-		System.out.println("Select a data access type:\n" + "1- Database\n" + "2- File\n" + "3- Hibernate\n"+"4- Client/Server\n"+"5 - OODB");
+		System.out.println("Select a data access type:\n" + "1- Database\n" + "2- File\n" + "3- Hibernate\n"+"4- Client/Server\n"+"5 - OODB"+"\n6. BaseX");
 		System.out.print("Option: ");
 		int opcion = Integer.parseInt(entrada.nextLine());
 		return opcion;
