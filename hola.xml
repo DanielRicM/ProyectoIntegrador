@@ -5,4 +5,9 @@
     <age>25</age>
     <course>DAM2</course>
   </student>
+  <student id="7">
+    <name>Dani</name>
+    <age>25</age>
+    <course>DAM2</course>
+  </student>
 </objects>
