@@ -29,7 +29,7 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
     public BaseXHandler(String clazz, ObjFactory<Identifiable> factory) {
         try {
             context = new Context();
-            this.clazz = clazz;
+            this.clazz = clazz.toLowerCase();
             this.factory = factory;
             openDB();
         } catch (BaseXException e) {
@@ -55,9 +55,8 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
     public Map<Integer, Identifiable> readObjects() {
         Map<Integer, Identifiable> objectMap = new HashMap<>();
         try {
-            String query = "//" + clazz;
+            String query = "/objects";
             String result = new XQuery(query).execute(context);
-
             InputStream fichero = new ByteArrayInputStream(result.getBytes());
             SAXBuilder saxBuilder = new SAXBuilder();
             Document document = saxBuilder.build(fichero);
@@ -66,7 +65,6 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
             List<Element> nodeList = rootElement.getChildren();
 
             for (Element objectElement : nodeList) {
-                System.out.println(objectElement);
                 Identifiable object = factory.create(objectElement);
                 int id = object.getId();
                 objectMap.put(id, object);
@@ -114,7 +112,7 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
             Element objectElement = factory.toXML(newObject);
             String formatted = xmlOut.outputString(objectElement);
             new XQuery("insert node " + formatted + " into /objects").execute(context);
-        } catch (BaseXException e) {
+        } catch (Exception e) {
             System.out.println("Error Basex writeOne"+e);
         }
     }
@@ -122,7 +120,7 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
     @Override
     public void deleteObject(int id) {
         try {
-            new XQuery("delete node //" + clazz + "[@id=" + id + "]").execute(context);
+            new XQuery("for $node in /objects/" + clazz + "[@id='" + id + "'] return delete node $node").execute(context);
         } catch (BaseXException e) {
             System.out.println("Error Basex delete"+e);
         }

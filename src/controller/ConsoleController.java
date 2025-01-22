@@ -277,7 +277,6 @@ public class ConsoleController {
         return new OODBHandler<>(clazz);
     }
     private BaseXHandler<Identifiable> createBaseXHandler(){
-        File file = new File("./files/"+clazz+".xml");
         view.displayMessage("BaseXHandler Created");
         return new BaseXHandler<>(clazz, factory);
     }
