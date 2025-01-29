@@ -53,3 +53,5 @@ nbdist/
 # Logs
 logs/
 *.log
+
+!lib/*.jar

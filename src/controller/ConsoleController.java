@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
+import model.MongoDB.MongoDBHandler;
 import model.OODB.OODBHandler;
 import model.basex.BaseXHandler;
 import org.basex.BaseX;
@@ -91,6 +92,9 @@ public class ConsoleController {
                 case 6:
                     myaccess = createBaseXHandler();
                     return;
+                case 7:
+                    myaccess = createMongoDBHandler();
+                    return;
                 default:
                     view.optionNotValid();
             }
@@ -167,6 +171,7 @@ public class ConsoleController {
             view.displayMessage("Update successful.");
         } catch (IllegalArgumentException e) {
             view.displayMessage("Object not found.");
+            e.printStackTrace();
         }
     }
 
@@ -276,8 +281,14 @@ public class ConsoleController {
         view.displayMessage("OODBHandler Created");
         return new OODBHandler<>(clazz);
     }
+
     private BaseXHandler<Identifiable> createBaseXHandler(){
         view.displayMessage("BaseXHandler Created");
         return new BaseXHandler<>(clazz, factory);
+    }
+
+    private MongoDBHandler<Identifiable> createMongoDBHandler(){
+        view.displayMessage("MongoDBHandler Created");
+        return new MongoDBHandler<>(table, factory);
     }
 }
