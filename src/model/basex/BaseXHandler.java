@@ -1,7 +1,6 @@
 package model.basex;
 
 import model.factory.ObjFactory;
-import model.fileio.XMLFileHandler;
 import model.interfaces.DataHandler;
 import model.interfaces.Identifiable;
 import org.basex.core.BaseXException;

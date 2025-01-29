@@ -8,8 +8,6 @@ import java.util.Map;
 import model.MongoDB.MongoDBHandler;
 import model.OODB.OODBHandler;
 import model.basex.BaseXHandler;
-import org.basex.BaseX;
-import org.hibernate.exception.ConstraintViolationException;
 
 import view.ConsoleView;
 import model.Hibernate.HibernateHandler;
@@ -154,8 +152,6 @@ public class ConsoleController {
         Identifiable object = inputHandler.getDetails(null);
         try {
             myaccess.writeObject(object);
-        } catch (ConstraintViolationException e) {
-            view.displayMessage("Constraint violation: " + e.getConstraintName());
         } catch (Exception e) {
             view.displayMessage("Error saving the object: " + e.getMessage());
         }
