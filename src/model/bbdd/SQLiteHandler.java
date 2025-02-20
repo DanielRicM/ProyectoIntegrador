@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import main.resources.ConfigManager;
 import model.factory.ObjFactory;
 import model.interfaces.Identifiable;
 
@@ -17,8 +18,7 @@ public class SQLiteHandler<T extends Identifiable> extends DDBBHandler<Identifia
 
 	@Override
 	protected Connection getConnection(String database) throws ClassNotFoundException, SQLException {
-		//Class.forName("org.sqlite.JDBC");
-		String url = "jdbc:sqlite:" + database;
+		String url = ConfigManager.getProperty("sqlite.url");
 		return DriverManager.getConnection(url);
 	}
 

@@ -7,7 +7,11 @@ import java.sql.SQLException;
 import model.factory.ObjFactory;
 import model.interfaces.Identifiable;
 
+import main.resources.ConfigManager;
+
+
 public class MySQLHandler<T extends Identifiable> extends DDBBHandler<Identifiable> {
+
 
 	public MySQLHandler(String database, ObjFactory<Identifiable> factory, String table) throws ClassNotFoundException, SQLException {
 		super(factory, table);
@@ -17,13 +21,13 @@ public class MySQLHandler<T extends Identifiable> extends DDBBHandler<Identifiab
 
 	@Override
 	protected Connection getConnection(String database) throws ClassNotFoundException, SQLException {
-		String driver = "com.mysql.cj.jdbc.Driver";
-		String hostname = "localhost";
-		String port = "3306";
-		String url = "jdbc:mysql://" + hostname + ":" + port + "/" + database + "?useSSL=false";
-		String username = "root";
-		String password = "root";
-		
+
+		String driver = ConfigManager.getProperty("mysql.driver");
+		String username = ConfigManager.getProperty("mysql.username");
+		String password = ConfigManager.getProperty("mysql.password");
+		String url = ConfigManager.getProperty("mysql.url");
+
+
 		Class.forName(driver);
 		return DriverManager.getConnection(url, username, password);
 	}

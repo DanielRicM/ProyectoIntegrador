@@ -1,7 +1,9 @@
 To-do:
 
-- Escribir uno modificarlo en el servidor 
-- Modificar apirequest para delete
+- cambiar id
+  cambiar tablas a singular
+  cambiar el controlador sin preguntar rutas
+
 
 
 

@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
-import model.MongoDB.MongoDBHandler;
-import model.OODB.OODBHandler;
+import model.mongodb.MongoDBHandler;
+import model.oodb.OODBHandler;
 import model.basex.BaseXHandler;
 
 import view.ConsoleView;
-import model.Hibernate.HibernateHandler;
-import model.JSONPHP.JSONPHPHandler;
+import model.hibernate.HibernateHandler;
+import model.jsonphp.JSONPHPHandler;
 import model.bbdd.DDBBHandler;
 import model.bbdd.MySQLHandler;
 import model.bbdd.SQLiteHandler;

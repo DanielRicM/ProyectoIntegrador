@@ -1,9 +1,10 @@
-package model.MongoDB;
+package model.mongodb;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import main.resources.ConfigManager;
 import model.factory.ObjFactory;
 import model.interfaces.DataHandler;
 import model.interfaces.Identifiable;
@@ -26,10 +27,9 @@ public class MongoDBHandler <T extends Identifiable> implements DataHandler<Iden
 
     public MongoDBHandler(String table, ObjFactory<Identifiable> factory){
         this.factory = factory;
-
-        mongoClient = new MongoClient("localhost",27017);
-        MongoDatabase database = mongoClient.getDatabase("adat");
-
+        mongoClient = new MongoClient(ConfigManager.getProperty("mongodb.host"),
+                Integer.parseInt(ConfigManager.getProperty("mongodb.port")));
+        MongoDatabase database = mongoClient.getDatabase(ConfigManager.getProperty("mongodb.database"));
         collection = database.getCollection(table);
 
     }
