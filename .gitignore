@@ -6,9 +6,21 @@
 *.ear
 *.zip
 *.tar.gz
-*.iml
-*.idea/
 .DS_Store
+
+# Files and databases
+*.sqlite
+*.sql
+*.db
+*.odb
+*.bin
+*.dat
+
+*.xml
+*.json
+*.csv
+*.txt
+*.pdf
 
 # Maven
 target/
@@ -44,14 +56,13 @@ tmp/
 
 # NetBeans
 nbproject/private/
-build/
+
 nbbuild/
 dist/
 nbdist/
-*.lock
 
 # Logs
 logs/
-*.log
 
+# Include libraries
 !lib/*.jar
