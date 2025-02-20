@@ -27,8 +27,8 @@ import model.factory.SongFactory;
 
 public class ConsoleController {
 
-    private ConsoleView view;
-    private DataHandler<Identifiable> myaccess;
+    private final ConsoleView view;
+    private DataHandler<Identifiable> dataHandler;
     private ObjFactory<Identifiable> factory;
     private InputHandler inputHandler;
     private String table;
@@ -39,11 +39,15 @@ public class ConsoleController {
     }
 
     public void run() {
-        selectObjectType();
+        while (startMenu()) {
+            selectObjectType();
+            dataHandler = selectDataAccess();
+            handleDataActions();
+        }
+    }
 
-        selectDataAccess();
-
-        handleDataActions();
+    private boolean startMenu() {
+        return view.startMenu();
     }
 
     private void selectObjectType() {
@@ -68,31 +72,23 @@ public class ConsoleController {
         }
     }
 
-    private void selectDataAccess() {
+    private DataHandler<Identifiable> selectDataAccess() {
         while (true) {
-            int option = view.askDataAccessType();
-            switch (option) {
+            switch (view.askDataAccessType()) {
                 case 1:
-                    myaccess = createDDBBHandler(view.askDatabase());
-                    return;
+                    return createDDBBHandler(view.askDatabase());
                 case 2:
-                    myaccess = createFileHandler(view.askFilePath());
-                    return;
+                    return createFileHandler(view.askFilePath());
                 case 3:
-                    myaccess = createHibernateHandler();
-                    return;
+                    return createHibernateHandler();
                 case 4:
-                    myaccess = createJSONPHPHandler();
-                    return;
+                    return createJSONPHPHandler();
                 case 5:
-                    myaccess = createOODBHandler();
-                    return;
+                    return createOODBHandler();
                 case 6:
-                    myaccess = createBaseXHandler();
-                    return;
+                    return createBaseXHandler();
                 case 7:
-                    myaccess = createMongoDBHandler();
-                    return;
+                    return createMongoDBHandler();
                 default:
                     view.optionNotValid();
             }
@@ -100,60 +96,55 @@ public class ConsoleController {
     }
 
     public void handleDataActions() {
-        boolean running = true;
-        while (running) {
-            int dataActionOption = view.dataActions();
-            switch (dataActionOption) {
-                case 1:
-                    viewAllObjects();
-                    break;
-                case 2:
-                    viewOneObject();
-                    break;
-                case 3:
-                    writeOneObject();
-                    break;
-                case 4:
-                    modifySingleObject();
-                    break;
-                case 5:
-                    deleteOneObject();
-                    break;
-                case 6:
-                    writeAllObjects();
-                    break;
-                case 7:
-                    try {
-                        myaccess.close();
-                    } catch (IOException e) {
-                        view.displayMessage("Error closing the access: " + e.getMessage());
-                    }
-                    System.out.println("Exiting...");
-                    running = false;
-                    break;
-                default:
-                    view.optionNotValid();
-                    break;
-            }
+        switch (view.dataActions()) {
+            case 1:
+                viewAllObjects();
+                break;
+            case 2:
+                viewOneObject();
+                break;
+            case 3:
+                writeOneObject();
+                break;
+            case 4:
+                modifySingleObject();
+                break;
+            case 5:
+                deleteOneObject();
+                break;
+            case 6:
+                transferObjects();
+                break;
+            case 7:
+                try {
+                    dataHandler.close();
+                } catch (IOException e) {
+                    view.displayMessage("Error closing the access: " + e.getMessage());
+                }
+                view.displayMessage("Exiting...");
+                return;
+            default:
+                view.optionNotValid();
+                break;
         }
     }
 
     private void viewAllObjects() {
-        Map<Integer, Identifiable> map = myaccess.readObjects();
+        Map<Integer, Identifiable> map = dataHandler.readObjects();
         view.displayAllObjects(map);
     }
 
     private void viewOneObject() {
-        Identifiable object = (Identifiable) myaccess.readObject(view.askId());
+        Identifiable object = dataHandler.readObject(view.askId());
         view.displayOneObject(object);
     }
 
     private void writeOneObject() {
         Identifiable object = inputHandler.getDetails(null);
         try {
-            myaccess.writeObject(object);
+            dataHandler.writeObject(object);
         } catch (Exception e) {
-            view.displayMessage("Error saving the object: " + e.getMessage());
+            view.displayMessage("Error creating the object: " + e.getMessage());
         }
     }
 
@@ -161,53 +152,29 @@ public class ConsoleController {
         int id = view.askId();
 
         try {
-            Identifiable existingObject = (Identifiable) myaccess.readObject(id);
+            Identifiable existingObject = dataHandler.readObject(id);
             Identifiable updatedObject = inputHandler.getDetails(existingObject);
-            myaccess.modifyObject(id, updatedObject);
+            dataHandler.modifyObject(id, updatedObject);
             view.displayMessage("Update successful.");
         } catch (IllegalArgumentException e) {
             view.displayMessage("Object not found.");
-            e.printStackTrace();
+            view.displayMessage(e.toString());
         }
     }
 
     private void deleteOneObject() {
-        myaccess.deleteObject(view.askId());
+        dataHandler.deleteObject(view.askId());
     }
 
-    private void writeAllObjects() {
-        Map<Integer, Identifiable> map = myaccess.readObjects();
-        int option = view.askDataAccessType();//Aquí en la view aparecen 5 opciones y aquí solo tenemos 4
-        switch (option) {
-            case 1:
-                String secondDatabase = view.askDatabase();
-                DDBBHandler<Identifiable> myaccessDDBB = createDDBBHandler(secondDatabase);
-                myaccessDDBB.writeObjects(map, false);
-                break;
-            case 2:
-                try {
-                    String secondFilePath = view.askFilePath();
-                    FileHandler<Identifiable> myaccessFile = createFileHandler(secondFilePath); // Pasar a DataHandler
-                    myaccessFile.writeObjects(map, false); // With DDBB, always false (do not overwrite)
-                    myaccessFile.close();
-                } catch (IOException e) {
-                    System.out.println(e.getMessage());
-                }
-                break;
-            case 3:
-                HibernateHandler<Identifiable> myHibernateAccess = createHibernateHandler();
-                myHibernateAccess.writeObjects(map, false);
-                break;
-            case 4:
-                JSONPHPHandler<Identifiable> myJSONPHPAccess = createJSONPHPHandler();
-                myJSONPHPAccess.writeObjects(map, false);
-                break;
-            case 5:
-                OODBHandler<Identifiable> myOODBAccess = createOODBHandler();
-                myOODBAccess.writeObjects(map, false);
-                break;
+    private void transferObjects() {
+        Map<Integer, Identifiable> map = dataHandler.readObjects();
 
+        DataHandler<Identifiable> secondDataHandler = selectDataAccess();
+        // TODO Handle nullPointerException better
+        if (secondDataHandler == null) {
+            return;
         }
+        secondDataHandler.writeObjects(map, false);
     }
 
     public String getExtension(String filePath) {
@@ -217,48 +184,46 @@ public class ConsoleController {
 
     private FileHandler<Identifiable> createFileHandler(String filePath) {
         FileHandler<Identifiable> access;
+        String extension = getExtension(filePath);
         try {
-            switch (getExtension(filePath)) {
-                case "txt":// Text
+            switch (extension) {
+                case "txt":
                     access = new TextFileHandler<>(new File(filePath), factory);
                     return access;
-                case "dat":// Binary
-                case "bin":
+                case "dat", "bin":
                     access = new BinaryFileHandler<>(new File(filePath));
                     return access;
-                case "xml":// XML
+                case "xml":
                     access = new XMLFileHandler<>(new File(filePath), factory);
                     return access;
                 default:
-                    view.optionNotValid();
-                    break;
+                    //TODO: create custom exception
+                    throw new IOException("File type not supported: " + extension);
             }
         } catch (IOException ex) {
-            view.displayMessage("Error handling file: " + ex.getMessage());
+            view.displayMessage("Error instantiating FileHandler: " + ex.getMessage());
         }
         return null;
     }
 
     private DDBBHandler<Identifiable> createDDBBHandler(String database) {
-        DDBBHandler<Identifiable> access;
-        String DataBaseType = getExtension(database);
+        String databaseType = getExtension(database);
         try {
-            if (DataBaseType.equals(database)) {
-                access = new MySQLHandler<>(database, factory, table);
-                return access;
-            }
-            switch (DataBaseType) { // En un futuro se implementarán otras based de datos
-                case "db":
-                    access = new SQLiteHandler<>(database, factory, table);
-                    return access;
-                default:
-                    view.optionNotValid();
+            if (databaseType.equals(database)) {
+                view.displayMessage("MySQLHandler Created");
+                return new MySQLHandler<>(database, factory, table);
+            } else if (databaseType.equals("db")) {
+                view.displayMessage("SQLiteHandler Created");
+                return new SQLiteHandler<>(database, factory, table);
+            } else {
+                throw new IOException("Database type not supported: " + databaseType);
             }
         } catch (ClassNotFoundException cnfe) {
-            view.displayMessage("Database class error" + cnfe);
-
+            view.displayMessage("Class error: " + cnfe.getMessage());
         } catch (SQLException sqle) {
-            view.displayMessage("Database error" + sqle);
+            view.displayMessage("SQL error: " + sqle.getMessage());
+        } catch (IOException ex) {
+            view.displayMessage("Error instantiating DDBBHandler: " + ex.getMessage());
         }
         return null;
     }
@@ -278,12 +243,12 @@ public class ConsoleController {
         return new OODBHandler<>(clazz);
     }
 
-    private BaseXHandler<Identifiable> createBaseXHandler(){
+    private BaseXHandler<Identifiable> createBaseXHandler() {
         view.displayMessage("BaseXHandler Created");
         return new BaseXHandler<>(clazz, factory);
     }
 
-    private MongoDBHandler<Identifiable> createMongoDBHandler(){
+    private MongoDBHandler<Identifiable> createMongoDBHandler() {
         view.displayMessage("MongoDBHandler Created");
         return new MongoDBHandler<>(table, factory);
     }

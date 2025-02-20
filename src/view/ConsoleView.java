@@ -7,77 +7,74 @@ import model.interfaces.Identifiable;
 
 public class ConsoleView implements View {
 
-	static Scanner entrada = new Scanner(System.in);
+    private final Scanner scanner;
 
-	public ConsoleView() {
-	}
+    public ConsoleView() {
+        scanner = new Scanner(System.in);
+    }
 
-	@Override
-	public int askObjectType() {
-		System.out.println("Select an Object type:\n" + "1- Student\n" + "2- Song\n");
-		System.out.print("Option: ");
-		int opcion = Integer.parseInt(entrada.nextLine());
-		return opcion;
-	}
+    @Override
+    public boolean startMenu() {
+        System.out.print("Press Enter to continue or Q to quit");
+        String option = scanner.nextLine();
+        return !option.equalsIgnoreCase("Q");
+    }
 
-	@Override
-	public int askDataAccessType() {
-		System.out.println("Select a data access type:\n" + "1- Database\n" + "2- File\n" + "3- Hibernate\n"+"4- Client/Server\n"+"5- OODB"+"\n6- BaseX"+"\n7- MongoDB");
-		System.out.print("Option: ");
-		int opcion = Integer.parseInt(entrada.nextLine());
-		return opcion;
-	}
+    @Override
+    public int askObjectType() {
+        System.out.print("Select an Object type:\n1- Student\n2- Song\nOption: ");
+        return Integer.parseInt(scanner.nextLine());
+    }
 
-	@Override
-	public String askFilePath() {
-		System.out.print("Enter the Filepath: ");
-		String filePath = entrada.nextLine();
-		return filePath;
-	}
+    @Override
+    public int askDataAccessType() {
+        System.out.print("Select a data access type:\n1- Database\n2- File\n3- Hibernate\n4- Client/Server\n5- OODB\n6- BaseX\n7- MongoDB\nOption: ");
+        return Integer.parseInt(scanner.nextLine());
+    }
 
-	@Override
-	public String askDatabase() {
-		System.out.print("Enter the Database name: ");
-		String database = entrada.nextLine();
-		return database;
-	}
+    @Override
+    public String askFilePath() {
+        System.out.print("Enter the Filepath: ");
+        return scanner.nextLine();
+    }
 
-	@Override
-	public int dataActions() {
-		System.out.println("¿Qué acción desea realizar?\n" + "1-Leer todos los objetos\n"
-				+ "2-Leer un objecto específico\n" + "3-Escribir un objeto\n" + "4-Modificar un objeto\n"
-				+ "5-Eliminar un objeto\n" + "6-Trasladar los objetos a otro tipo de acceso a datos\n" + "7-Salir\n");
-		System.out.print("Option: ");
-		int opcion = Integer.parseInt(entrada.nextLine());
-		return opcion;
-	}
+    @Override
+    public String askDatabase() {
+        System.out.print("Enter the Database name: ");
+        return scanner.nextLine();
+    }
 
-	@Override
-	public int askId() {
-		System.out.print("Enter the ID of the object you want to read: ");
-		int opcion = Integer.parseInt(entrada.nextLine());
-		return opcion;
-	}
+    @Override
+    public int dataActions() {
+        System.out.print("What do you want to do?\n1- Read all objects\n2- Read object by Id\n3- Create an object\n4- Update an object\n5- Delete an object\n6- Move everyting to another access type\n7- Exit\nOption: ");
+        return Integer.parseInt(scanner.nextLine());
+    }
 
-	@Override
-	public void displayAllObjects(Map<Integer, ? extends Identifiable> map) {
-		for (Identifiable object : map.values()) {
-			System.out.println(object);
-		}
-	}
+    @Override
+    public int askId() {
+        System.out.print("Enter the ID of the object you want to read: ");
+        return Integer.parseInt(scanner.nextLine());
+    }
 
-	@Override
-	public void displayOneObject(Identifiable object) {
-		System.out.println(object);
-	}
+    @Override
+    public void displayAllObjects(Map<Integer, ? extends Identifiable> map) {
+        for (Identifiable object : map.values()) {
+            System.out.println(object);
+        }
+    }
 
-	@Override
-	public void displayMessage(String message) {
-		System.out.println(message);
-	}
+    @Override
+    public void displayOneObject(Identifiable object) {
+        System.out.println(object);
+    }
 
-	public void optionNotValid() {
-		this.displayMessage("Option not valid. Try again.");
-	}
+    @Override
+    public void displayMessage(String message) {
+        System.out.println(message);
+    }
+
+    public void optionNotValid() {
+        this.displayMessage("Option not valid. Try again.");
+    }
 
 }

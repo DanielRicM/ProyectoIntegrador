@@ -6,6 +6,8 @@ import model.interfaces.Identifiable;
 
 public interface View {
 
+	boolean startMenu();
+
 	int askObjectType();
 	
 	int askDataAccessType();
