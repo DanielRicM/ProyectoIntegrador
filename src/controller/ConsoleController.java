@@ -55,13 +55,13 @@ public class ConsoleController {
                 case 1:
                     inputHandler = new StudentInputHandler();
                     factory = new StudentFactory();
-                    table = "students";
+                    table = "student";
                     clazz = "Student";
                     return;
                 case 2:
                     inputHandler = new SongInputHandler();
                     factory = new SongFactory();
-                    table = "songs";
+                    table = "song";
                     clazz = "Song";
                     return;
                 default:
@@ -141,8 +141,12 @@ public class ConsoleController {
     }
 
     private void viewOneObject() {
-        Identifiable object = dataHandler.readObject(view.askId());
-        view.displayOneObject(object);
+            Identifiable object = dataHandler.readObject(view.askId());
+            if(object==null){
+                view.displayMessage("Object does not exists");
+                return;
+            }
+            view.displayOneObject(object);
     }
 
     private void writeOneObject() {
@@ -155,7 +159,6 @@ public class ConsoleController {
     }
 
     private void modifySingleObject() {
-
         try {
             int id = view.askId();
             Identifiable existingObject = dataHandler.readObject(id);
@@ -166,12 +169,18 @@ public class ConsoleController {
             view.displayMessage("Id not valid.");
         } catch (IllegalArgumentException e) {
             view.displayMessage("Object not found.");
-            view.displayMessage(e.toString());
         }
     }
 
     private void deleteOneObject() {
-        dataHandler.deleteObject(view.askId());
+        try{
+            dataHandler.deleteObject(view.askId());
+            view.displayMessage("Delete successful.");
+        }catch (NumberFormatException e){
+            view.displayMessage("Id not valid.");
+        }
+
+
     }
 
     private void transferObjects() {
@@ -183,6 +192,11 @@ public class ConsoleController {
             return;
         }
         secondDataHandler.writeObjects(map, false);
+        try{
+            secondDataHandler.close();
+        }catch (IOException e){
+            view.displayMessage("Error closing the second access.");
+        }
     }
 
     private MySQLHandler<Identifiable> createMySQLHandler() {

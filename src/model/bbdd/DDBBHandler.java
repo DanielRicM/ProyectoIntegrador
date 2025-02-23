@@ -23,6 +23,7 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 	protected DDBBHandler(ObjFactory<Identifiable> factory, String table){
 		this.table = table;
 		this.factory = factory;
+
 	}
 
 	protected abstract Connection getConnection() throws ClassNotFoundException, SQLException;
@@ -82,7 +83,6 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 			return object;
 
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
 		}
 		return null;
 	}
@@ -119,7 +119,6 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 			String query = "Delete from " + table + " where id=" + id;
 			stm.executeUpdate(query);
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
 		}
 
 	}
@@ -127,10 +126,9 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 	@Override
 	public void modifyObject(int id, Identifiable newObject) {
 		try {
-			String query = factory.toUpdateQuery(newObject) + " where id= " + id;
+			String query = factory.toUpdateQuery(newObject);
 			stm.executeUpdate(query);
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
 		}
 
 	}

@@ -14,6 +14,7 @@ public class SQLiteHandler<T extends Identifiable> extends DDBBHandler<Identifia
 		super(factory, table);
 		this.connection = getConnection();
 		this.stm = connection.createStatement();
+		stm.execute(factory.createTable());
 	}
 
 	@Override

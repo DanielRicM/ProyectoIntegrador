@@ -56,7 +56,6 @@ public class ConsoleView implements View {
     public int askId() {
         System.out.print("Enter the ID of the object you want to read: ");
         return Integer.parseInt(scanner.nextLine());
-
     }
 
     @Override

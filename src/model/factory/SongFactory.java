@@ -65,7 +65,7 @@ public class SongFactory implements ObjFactory<Identifiable> {
 	@Override
 	public String toUpdateQuery(Identifiable object) {
 		Song song = (Song) object;
-		return "UPDATE songs SET name = '" + song.getName() + "', author = '" + song.getAuthor() + "', album = '"
+		return "UPDATE song SET name = '" + song.getName() + "', author = '" + song.getAuthor() + "', album = '"
 				+ song.getAlbum() + "' WHERE id = " + song.getId();
 	}
 	
@@ -93,6 +93,17 @@ public class SongFactory implements ObjFactory<Identifiable> {
 		jsonObject.put("album", song.getAlbum());
 		
 		return jsonObject;
+	}
+
+	@Override
+	public String createTable() {
+		String query = "CREATE TABLE IF NOT EXISTS song (\n" +
+				"    id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+				"    name TEXT,\n" +
+				"    author TEXT,\n" +
+				"    album TEXT\n" +
+				")";
+		return query;
 	}
 
 }

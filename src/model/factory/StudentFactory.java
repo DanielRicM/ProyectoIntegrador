@@ -54,6 +54,17 @@ public class StudentFactory implements ObjFactory<Identifiable> {
 	}
 
 	@Override
+	public String createTable(){
+		String query = "CREATE TABLE IF NOT EXISTS student (\n" +
+				"    id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+				"    name TEXT,\n" +
+				"    age INTEGER,\n" +
+				"    course TEXT\n" +
+				")";
+		return query;
+	}
+
+	@Override
 	public String toQuery(Identifiable object) {
 		Student student = (Student) object;
 		String queryValues = String.valueOf(student.getId()) + ", '" + student.getName() + "', "
@@ -63,7 +74,7 @@ public class StudentFactory implements ObjFactory<Identifiable> {
 
 	public String toUpdateQuery(Identifiable object) {
 		Student student = (Student) object;
-		return "UPDATE students SET name = '" + student.getName() + "', age = " + student.getAge() + ", course = '"
+		return "UPDATE student SET name = '" + student.getName() + "', age = " + student.getAge() + ", course = '"
 				+ student.getCourse() + "' WHERE id = " + student.getId();
 	}
 	

@@ -32,8 +32,7 @@ public abstract class FileHandler<T extends Identifiable> implements DataHandler
 		if (map.containsKey(id)) {
 			return map.get(id);
 		} else {
-			throw new IllegalArgumentException("Object with ID " + id + " not found.");
-		}
+			return null;		}
 	}
 
 	@Override
@@ -46,12 +45,8 @@ public abstract class FileHandler<T extends Identifiable> implements DataHandler
 	
 	@Override
 	public void writeObject(Identifiable object) {
-		if (object instanceof Identifiable) {
 			Integer id = ((Identifiable) object).getId();
 			map.put(id, object);
-		} else {
-			throw new IllegalArgumentException("Object must implement Identifiable");
-		}
 	}
 
 	@Override
@@ -64,7 +59,7 @@ public abstract class FileHandler<T extends Identifiable> implements DataHandler
 		if (map.containsKey(id)) {
 			map.put(id, newObject);
 		} else {
-			throw new IllegalArgumentException("Object with ID " + id + " not found.");
+			throw new IllegalArgumentException();
 		}
 	}
 

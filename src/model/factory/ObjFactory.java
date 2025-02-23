@@ -23,4 +23,6 @@ public interface ObjFactory<T extends Identifiable> {
 	
 	JSONObject toJSONObject(Identifiable object);
 
+	String createTable();
+
 }
