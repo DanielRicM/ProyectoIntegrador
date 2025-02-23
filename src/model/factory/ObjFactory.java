@@ -7,22 +7,22 @@ import model.interfaces.Identifiable;
 
 public interface ObjFactory<T extends Identifiable> {
 
-	Identifiable create(String line);
+    Identifiable create(String line);
 
-	String toCSV(Identifiable object);
+    String toCSV(Identifiable object);
 
-	Identifiable create(Element rootElement);
+    Identifiable create(Element rootElement);
 
-	Element toXML(Identifiable object);
-	
-	String toQuery(Identifiable object);
-	
-	String toUpdateQuery(Identifiable object);
-	
-	Identifiable create(JSONObject row);
-	
-	JSONObject toJSONObject(Identifiable object);
+    Element toXML(Identifiable object);
 
-	String createTable();
+    String toQuery(Identifiable object);
+
+    String toUpdateQuery(Identifiable object);
+
+    Identifiable create(JSONObject row);
+
+    JSONObject toJSONObject(Identifiable object);
+
+    String createTableQuery();
 
 }

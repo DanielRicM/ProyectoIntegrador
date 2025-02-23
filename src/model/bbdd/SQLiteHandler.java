@@ -10,17 +10,17 @@ import model.interfaces.Identifiable;
 
 public class SQLiteHandler<T extends Identifiable> extends DDBBHandler<Identifiable> {
 
-	public SQLiteHandler(ObjFactory<Identifiable> factory, String table) throws SQLException {
-		super(factory, table);
-		this.connection = getConnection();
-		this.stm = connection.createStatement();
-		stm.execute(factory.createTable());
-	}
+    public SQLiteHandler(ObjFactory<Identifiable> factory, String table) throws SQLException {
+        super(factory, table);
+        this.connection = getConnection();
+        this.stm = connection.createStatement();
+        stm.execute(factory.createTableQuery());
+    }
 
-	@Override
-	protected Connection getConnection() throws SQLException {
-		String url = ConfigManager.getProperty("sqlite.url");
-		return DriverManager.getConnection(url);
-	}
+    @Override
+    protected Connection getConnection() throws SQLException {
+        String url = ConfigManager.getProperty("sqlite.url");
+        return DriverManager.getConnection(url);
+    }
 
 }

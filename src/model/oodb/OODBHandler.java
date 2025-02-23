@@ -6,16 +6,14 @@ import model.interfaces.Identifiable;
 
 import javax.persistence.*;
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class OODBHandler <T extends Identifiable> implements DataHandler<Identifiable>, Closeable {
-    private EntityManagerFactory emf;
-    private EntityManager em;
-    private String clazz;
+    private final EntityManagerFactory emf;
+    private final EntityManager em;
+    private final String clazz;
 
     public OODBHandler(String clazz) {
         emf = Persistence.createEntityManagerFactory(ConfigManager.getProperty("odb.database"));
@@ -25,12 +23,10 @@ public class OODBHandler <T extends Identifiable> implements DataHandler<Identif
 
     @Override
     public Map<Integer, Identifiable> readObjects() {
-        Map<Integer, Identifiable> map = new HashMap<Integer, Identifiable>();
-        TypedQuery<Identifiable> q = em.createQuery("Select c from " + clazz + " c ", Identifiable.class);//Te pide que lo castees para que sepas que es identifiable, sino se puede evitar con identifiable.class
+        Map<Integer, Identifiable> map = new HashMap<>();
+        TypedQuery<Identifiable> q = em.createQuery("Select c from " + clazz + " c ", Identifiable.class);
         List<Identifiable> results = q.getResultList();
-        Iterator<Identifiable> iterator = results.iterator();
-        while (iterator.hasNext()) {
-            Identifiable object = (Identifiable) iterator.next();
+        for (Identifiable object : results) {
             map.put(object.getId(), object);
         }
         return map;
@@ -73,7 +69,7 @@ public class OODBHandler <T extends Identifiable> implements DataHandler<Identif
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         em.close();
         emf.close();
     }

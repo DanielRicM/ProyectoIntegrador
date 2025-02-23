@@ -35,14 +35,13 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
             try {
                 createDB();
             } catch (BaseXException ex) {
-                //TODO
-                System.out.println(ex);
+                System.out.println("Error creating BaseX database.");
             }
         }
     }
 
     private void createDB() throws BaseXException {
-        String path = "./files/"+clazz+".xml";
+        String path = "./files/" + clazz + ".xml";
         new CreateDB(clazz, path).execute(context);
     }
 
@@ -69,7 +68,8 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
                 objectMap.put(id, object);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error reading the database.");
+            return new HashMap<>();
         }
         return objectMap;
     }
@@ -85,7 +85,7 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
             Element rootElement = document.getRootElement();
             return factory.create(rootElement);
         } catch (Exception e) {
-            System.out.println("Error Basex readOne"+e);
+            System.out.println("Error reading the database.");
             return null;
         }
     }
@@ -100,7 +100,7 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
                 new XQuery("insert node " + formatted + " into /objects").execute(context);
             }
         } catch (BaseXException e) {
-            System.out.println("Error Basex writeAll"+e);
+            System.out.println("Error writing in the database.");
         }
     }
 
@@ -112,7 +112,7 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
             String formatted = xmlOut.outputString(objectElement);
             new XQuery("insert node " + formatted + " into /objects").execute(context);
         } catch (Exception e) {
-            System.out.println("Error Basex writeOne"+e);
+            System.out.println("Error writing in the database.");
         }
     }
 
@@ -121,9 +121,8 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
         try {
             new XQuery("for $node in /objects/" + clazz + "[@id='" + id + "'] return delete node $node").execute(context);
         } catch (BaseXException e) {
-            System.out.println("Error Basex delete"+e);
+            System.out.println("Error deleting.");
         }
-
     }
 
     @Override
@@ -134,14 +133,12 @@ public class BaseXHandler<T extends Identifiable> implements DataHandler<Identif
             String formatted = xmlOut.outputString(objectElement);
             new XQuery("replace node //" + clazz + "[@id=" + id + "] with " + formatted).execute(context);
         } catch (BaseXException e) {
-            System.out.println("Error Basex modify"+e);
+            System.out.println("Error writing in the database.");
         }
-
-
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         context.close();
     }
 }

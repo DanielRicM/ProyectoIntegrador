@@ -37,7 +37,7 @@ public class BinaryFileHandler<T extends Identifiable> extends FileHandler<Ident
                 }
             }
         } catch (ClassNotFoundException e) {
-            throw new IOException("Error reading object from file", e);
+            throw new IOException("Error reading objects from file");
         }
         return objectMap;
     }

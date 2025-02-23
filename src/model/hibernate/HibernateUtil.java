@@ -6,21 +6,20 @@ import org.hibernate.cfg.Configuration;
 
 public class HibernateUtil {
 
-	private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
-	private Session session;
+    private final Session session;
 
-	public HibernateUtil() {
-		sessionFactory = new Configuration().configure().buildSessionFactory();
-		session = sessionFactory.openSession();
+    public HibernateUtil() {
+        sessionFactory = new Configuration().configure().buildSessionFactory();
+        session = sessionFactory.openSession();
+    }
 
-	}
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
 
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-
-	public Session getSession() {
-		return session;
-	}
+    public Session getSession() {
+        return session;
+    }
 }

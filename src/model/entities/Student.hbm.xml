@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
 
-	<class name="model.entities.Student" table="students">
-		<id name="id" type="int">
-			<column name="id" />
-		</id>
-		<property name="name" type="string">
-			<column name="name" length="50" not-null="true" />
-		</property>
-		<property name="age" type="int">
-			<column name="age" not-null="true" />
-		</property>
-		<property name="course" type="string">
-			<column name="course" length="50" not-null="true" />
-		</property>
-	</class>
-	
+    <class name="model.entities.Student" table="students">
+        <id name="id" type="int">
+            <column name="id"/>
+        </id>
+        <property name="name" type="string">
+            <column name="name" length="50" not-null="true"/>
+        </property>
+        <property name="age" type="int">
+            <column name="age" not-null="true"/>
+        </property>
+        <property name="course" type="string">
+            <column name="course" length="50" not-null="true"/>
+        </property>
+    </class>
+
 </hibernate-mapping>

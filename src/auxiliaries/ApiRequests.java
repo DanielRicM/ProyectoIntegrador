@@ -1,6 +1,7 @@
 package auxiliaries;
 
 import com.squareup.okhttp.*;
+
 import java.io.IOException;
 
 /**
@@ -12,18 +13,19 @@ public class ApiRequests {
 
     OkHttpClient client;
 
-    public ApiRequests(){
+    public ApiRequests() {
         client = new OkHttpClient();
     }
 
     /**
      * Metodo usado para hacer peticiones GET.
+     *
      * @param url URL a la que realizar la peticion.
      * @return Cuerpo de la respuesta.
      * @throws IOException
      */
     public String getRequest(String url) throws IOException {
-        Request request= new Request.Builder()
+        Request request = new Request.Builder()
                 .url(url)
                 .build();
 
@@ -31,8 +33,8 @@ public class ApiRequests {
 
         return response.body().string();
     }
-    
-    public String getRequest(String url, String json) throws IOException{
+
+    public String getRequest(String url, String json) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
@@ -46,12 +48,13 @@ public class ApiRequests {
 
     /**
      * Metodo usado para hacer peticiones json POST.
-     * @param url URL a la que realizar la peticion.
+     *
+     * @param url  URL a la que realizar la peticion.
      * @param json Contenido de la request en JSON.
      * @return Cuerpo de la respuesta.
      * @throws IOException
      */
-    public String postRequest(String url, String json) throws IOException{
+    public String postRequest(String url, String json) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
@@ -62,9 +65,9 @@ public class ApiRequests {
 
         return response.body().string();
     }
-    
-    
-    public String putRequest(String url, String json) throws IOException{
+
+
+    public String putRequest(String url, String json) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
@@ -78,7 +81,8 @@ public class ApiRequests {
 
     /**
      * Metodo usado para hacer una peticion POST mandando el json por un parametro llamado json
-     * @param url URL a la que realizar la peticion.
+     *
+     * @param url  URL a la que realizar la peticion.
      * @param json Contenido del parametro json
      * @return Cuerpo de la respuesta.
      * @throws IOException
@@ -96,9 +100,9 @@ public class ApiRequests {
 
         return response.body().string();
     }
-    
+
     public String deleteRequest(String url) throws IOException {
-        Request request= new Request.Builder()
+        Request request = new Request.Builder()
                 .url(url)
                 .delete()
                 .build();

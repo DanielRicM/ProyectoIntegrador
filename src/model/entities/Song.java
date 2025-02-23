@@ -1,5 +1,6 @@
 package model.entities;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import model.interfaces.Identifiable;
@@ -9,64 +10,65 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Song implements Serializable, Identifiable{
+public class Song implements Serializable, Identifiable {
 
-	private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue
-	private int id;
-	private String name;
-	private String author;
-	private String album;
-	
-	
-	public Song(int id, String name, String author, String album) {
-		this.id = id;
-		this.name = name;
-		this.author = author;
-		this.album = album;
-	}
-	
-	public Song() {
-	}
+    @Id
+    @GeneratedValue
+    private int id;
+    private String name;
+    private String author;
+    private String album;
 
-	@Override
-	public Integer getId() {
-		return id;
-	}
-	
-	public void setId(int id) {
-		this.id = id;
-	}
 
-	public String getName() {
-		return name;
-	}
+    public Song(int id, String name, String author, String album) {
+        this.id = id;
+        this.name = name;
+        this.author = author;
+        this.album = album;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Song() {
+    }
 
-	public String getAuthor() {
-		return author;
-	}
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
-	public void setAuthor(String author) {
-		this.author = author;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getAlbum() {
-		return album;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setAlbum(String album) {
-		this.album = album;
-	}
-	
-	@Override
-	public String toString() {
-		return "Song " + id + ":\nName: " + name + "\nAuthor: " + author + "\nAlbum: " + album;
-	}
-	
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
+    @Override
+    public String toString() {
+        return "Song " + id + ":\nName: " + name + "\nAuthor: " + author + "\nAlbum: " + album;
+    }
+
 }

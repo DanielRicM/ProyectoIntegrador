@@ -1,6 +1,5 @@
 package controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
@@ -141,12 +140,12 @@ public class ConsoleController {
     }
 
     private void viewOneObject() {
-            Identifiable object = dataHandler.readObject(view.askId());
-            if(object==null){
-                view.displayMessage("Object does not exists");
-                return;
-            }
-            view.displayOneObject(object);
+        Identifiable object = dataHandler.readObject(view.askId());
+        if (object == null) {
+            view.displayMessage("Object does not exist.");
+            return;
+        }
+        view.displayOneObject(object);
     }
 
     private void writeOneObject() {
@@ -154,7 +153,7 @@ public class ConsoleController {
         try {
             dataHandler.writeObject(object);
         } catch (Exception e) {
-            view.displayMessage("Error creating the object: " + e.getMessage());
+            view.displayMessage("Error creating the object.");
         }
     }
 
@@ -173,10 +172,10 @@ public class ConsoleController {
     }
 
     private void deleteOneObject() {
-        try{
+        try {
             dataHandler.deleteObject(view.askId());
             view.displayMessage("Delete successful.");
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             view.displayMessage("Id not valid.");
         }
 
@@ -187,14 +186,14 @@ public class ConsoleController {
         Map<Integer, Identifiable> map = dataHandler.readObjects();
 
         DataHandler<Identifiable> secondDataHandler = selectDataAccess();
-        // TODO Handle nullPointerException better
         if (secondDataHandler == null) {
             return;
         }
         secondDataHandler.writeObjects(map, false);
-        try{
+        view.displayMessage("Transfer successful.");
+        try {
             secondDataHandler.close();
-        }catch (IOException e){
+        } catch (IOException e) {
             view.displayMessage("Error closing the second access.");
         }
     }
@@ -213,7 +212,7 @@ public class ConsoleController {
 
     private SQLiteHandler<Identifiable> createSQLiteHandler() {
         try {
-            view.displayMessage("SQLiteHandler Created");
+            view.displayMessage("Creating SQLiteHandler...");
             return new SQLiteHandler<>(factory, table);
         } catch (SQLException sqle) {
             view.displayMessage("SQL error: " + sqle.getMessage());
@@ -226,7 +225,7 @@ public class ConsoleController {
             view.displayMessage("Creating TextFileHandler...");
             return new TextFileHandler<>(clazz, factory);
         } catch (IOException ex) {
-            view.displayMessage("Error instantiating TextFileHandler: " + ex.getMessage());
+            view.displayMessage("Error instantiating TextFileHandler");
         }
         return null;
     }
@@ -236,7 +235,7 @@ public class ConsoleController {
             view.displayMessage("Creating XMLFileHandler...");
             return new XMLFileHandler<>(clazz, factory);
         } catch (IOException ex) {
-            view.displayMessage("Error instantiating XMLFileHandler: " + ex.getMessage());
+            view.displayMessage("Error instantiating XMLFileHandler");
         }
         return null;
     }
@@ -246,33 +245,33 @@ public class ConsoleController {
             view.displayMessage("Creating BinaryFileHandler...");
             return new BinaryFileHandler<>(clazz);
         } catch (IOException ex) {
-            view.displayMessage("Error instantiating BinaryFileHandler: " + ex.getMessage());
+            view.displayMessage("Error instantiating BinaryFileHandler");
         }
         return null;
     }
 
     private HibernateHandler<Identifiable> createHibernateHandler() {
-        view.displayMessage("HibernateHandler Created");
+        view.displayMessage("Creating HibernateHandler...");
         return new HibernateHandler<>(clazz);
     }
 
     private JSONPHPHandler<Identifiable> createJSONPHPHandler() {
-        view.displayMessage("JSONPHPHandler Created");
+        view.displayMessage("Creating JSONPHPHandler...");
         return new JSONPHPHandler<>(table, factory);
     }
 
     private OODBHandler<Identifiable> createOODBHandler() {
-        view.displayMessage("OODBHandler Created");
+        view.displayMessage("Creating OODBHandler...");
         return new OODBHandler<>(clazz);
     }
 
     private BaseXHandler<Identifiable> createBaseXHandler() {
-        view.displayMessage("BaseXHandler Created");
+        view.displayMessage("Creating BaseXHandler...");
         return new BaseXHandler<>(clazz, factory);
     }
 
     private MongoDBHandler<Identifiable> createMongoDBHandler() {
-        view.displayMessage("MongoDBHandler Created");
+        view.displayMessage("Creating MongoDBHandler...");
         return new MongoDBHandler<>(table, factory);
     }
 }

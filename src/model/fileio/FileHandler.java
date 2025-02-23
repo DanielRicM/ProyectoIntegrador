@@ -10,60 +10,57 @@ import model.interfaces.Identifiable;
 
 public abstract class FileHandler<T extends Identifiable> implements DataHandler<Identifiable>, AutoCloseable {
 
-	protected final File file;
-	protected Map<Integer, Identifiable> map;
+    protected final File file;
+    protected Map<Integer, Identifiable> map;
 
-	protected FileHandler(File file) {
-		this.file = file;
-		this.map = new HashMap<>();
-	}
-	
-	protected abstract Map<Integer, Identifiable> initialReadObjects() throws IOException;
+    protected FileHandler(File file) {
+        this.file = file;
+        this.map = new HashMap<>();
+    }
 
-	protected abstract void finalWriteObjects() throws IOException;
+    protected abstract Map<Integer, Identifiable> initialReadObjects() throws IOException;
 
-	@Override
-	public Map<Integer, Identifiable> readObjects() {
-		return map;
-	}
+    protected abstract void finalWriteObjects() throws IOException;
 
-	@Override
-	public Identifiable readObject(int id) {
-		if (map.containsKey(id)) {
-			return map.get(id);
-		} else {
-			return null;		}
-	}
+    @Override
+    public Map<Integer, Identifiable> readObjects() {
+        return map;
+    }
 
-	@Override
-	public void writeObjects(Map<Integer, Identifiable> map, boolean overwrite) {
-		if(overwrite) {
-			this.map = new HashMap<>();
-		}
-		this.map.putAll(map); // May add boolean for overwrite
-	}
-	
-	@Override
-	public void writeObject(Identifiable object) {
-			Integer id = ((Identifiable) object).getId();
-			map.put(id, object);
-	}
+    @Override
+    public Identifiable readObject(int id) {
+        return map.getOrDefault(id, null);
+    }
 
-	@Override
-	public void deleteObject(int id) {
-		map.remove(id);
-	}
+    @Override
+    public void writeObjects(Map<Integer, Identifiable> map, boolean overwrite) {
+        if (overwrite) {
+            this.map = new HashMap<>();
+        }
+        this.map.putAll(map);
+    }
 
-	@Override
-	public void modifyObject(int id, Identifiable newObject) {
-		if (map.containsKey(id)) {
-			map.put(id, newObject);
-		} else {
-			throw new IllegalArgumentException();
-		}
-	}
+    @Override
+    public void writeObject(Identifiable object) {
+        Integer id = (object).getId();
+        map.put(id, object);
+    }
 
-	public void close() throws IOException {
-		finalWriteObjects();
-	}
+    @Override
+    public void deleteObject(int id) {
+        map.remove(id);
+    }
+
+    @Override
+    public void modifyObject(int id, Identifiable newObject) {
+        if (map.containsKey(id)) {
+            map.put(id, newObject);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void close() throws IOException {
+        finalWriteObjects();
+    }
 }

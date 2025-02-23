@@ -2,7 +2,6 @@ package model.mongodb;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import resources.ConfigManager;
 import model.factory.ObjFactory;
@@ -21,9 +20,9 @@ import java.util.Map;
 
 public class MongoDBHandler <T extends Identifiable> implements DataHandler<Identifiable>, Closeable {
 
-    private MongoCollection<Document> collection;
-    private ObjFactory<Identifiable> factory;
-    private MongoClient mongoClient;
+    private final MongoCollection<Document> collection;
+    private final ObjFactory<Identifiable> factory;
+    private final MongoClient mongoClient;
 
     public MongoDBHandler(String table, ObjFactory<Identifiable> factory){
         this.factory = factory;
@@ -31,19 +30,15 @@ public class MongoDBHandler <T extends Identifiable> implements DataHandler<Iden
                 Integer.parseInt(ConfigManager.getProperty("mongodb.port")));
         MongoDatabase database = mongoClient.getDatabase(ConfigManager.getProperty("mongodb.database"));
         collection = database.getCollection(table);
-
     }
 
     @Override
     public Map<Integer, Identifiable> readObjects() {
         Map<Integer, Identifiable> map = new HashMap<>();
-        MongoCursor resultado = collection.find().iterator();
-
-        while (resultado.hasNext()) {
-            Document doc = (Document) resultado.next();
+        for (Document doc : collection.find()) {
             JSONObject json = (JSONObject) JSONValue.parse(doc.toJson());
             Identifiable object = factory.create(json);
-            map.put(object.getId(),object);
+            map.put(object.getId(), object);
         }
         return map;
     }
@@ -52,12 +47,9 @@ public class MongoDBHandler <T extends Identifiable> implements DataHandler<Iden
     public Identifiable readObject(int id) {
         Document searchQuery = new Document();
         searchQuery.put("id", id);
-        MongoCursor<Document> resultado = collection.find(searchQuery).iterator();
-        while (resultado.hasNext()) {
-            Document doc = (Document) resultado.next();
+        for (Document doc : collection.find(searchQuery)) {
             JSONObject json = (JSONObject) JSONValue.parse(doc.toJson());
-            Identifiable object = factory.create(json);
-            return object;
+            return factory.create(json);
         }
         return null;
     }
@@ -65,13 +57,11 @@ public class MongoDBHandler <T extends Identifiable> implements DataHandler<Iden
     @Override
     public void writeObjects(Map<Integer, Identifiable> map, boolean overwrite) {
         List<Document> documents = new ArrayList<>();
-
         for(Identifiable object : map.values()){
             JSONObject json = factory.toJSONObject(object);
             Document doc =Document.parse(json.toJSONString());
             documents.add(doc);
         }
-
         collection.insertMany(documents);
     }
 
