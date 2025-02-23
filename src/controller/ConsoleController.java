@@ -12,11 +12,9 @@ import model.basex.BaseXHandler;
 import view.ConsoleView;
 import model.hibernate.HibernateHandler;
 import model.jsonphp.JSONPHPHandler;
-import model.bbdd.DDBBHandler;
 import model.bbdd.MySQLHandler;
 import model.bbdd.SQLiteHandler;
 import model.fileio.BinaryFileHandler;
-import model.fileio.FileHandler;
 import model.fileio.TextFileHandler;
 import model.fileio.XMLFileHandler;
 import model.interfaces.DataHandler;
@@ -157,13 +155,15 @@ public class ConsoleController {
     }
 
     private void modifySingleObject() {
-        int id = view.askId();
 
         try {
+            int id = view.askId();
             Identifiable existingObject = dataHandler.readObject(id);
             Identifiable updatedObject = inputHandler.getDetails(existingObject);
             dataHandler.modifyObject(id, updatedObject);
             view.displayMessage("Update successful.");
+        } catch (NumberFormatException e) {
+            view.displayMessage("Id not valid.");
         } catch (IllegalArgumentException e) {
             view.displayMessage("Object not found.");
             view.displayMessage(e.toString());
