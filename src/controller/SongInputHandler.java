@@ -15,50 +15,50 @@ public class SongInputHandler implements InputHandler {
 
     @Override
     public Song getDetails(Identifiable object) {
-        Song song = (object instanceof Song) ? (Song) object : null;
-
-        System.out.print("Enter the name: ");
-        String name = scanner.nextLine();
-        if (name.isBlank() && song == null) {
-            System.out.print("The name is mandatory.");
-            return getDetails(object);
+        Song song;
+        if (object instanceof Song s) {
+            song = s;
+        } else {
+            song = null;
         }
 
-        System.out.print("Enter the author's name: ");
-        String author = scanner.nextLine();
-        if (author.isBlank() && song == null) {
-            System.out.println("The author's name is mandatory.");
-            return getDetails(object);
-        }
-
-        System.out.print("Enter the album's name: ");
-        String album = scanner.nextLine();
-        if (album.isBlank() && song == null) {
-            System.out.println("The album's name is mandatory.");
-            return getDetails(object);
-        }
+        String name = getNonEmptyInput("Enter the name: ", song == null);
+        String author = getNonEmptyInput("Enter the author's name: ", song == null);
+        String album = getNonEmptyInput("Enter the album's name: ", song == null);
 
         if (song != null) {
-            if (!name.isBlank())
-                song.setName(name);
-            if (!author.isBlank())
-                song.setAuthor(author);
-            if (!album.isBlank())
-                song.setAlbum(album);
+            if (!name.isBlank()) song.setName(name);
+            if (!author.isBlank()) song.setAuthor(author);
+            if (!album.isBlank()) song.setAlbum(album);
             return song;
         }
 
-        int id = 0;
-        while (id == 0) {
+        int id = getValidId();
+        return new Song(id, name, author, album);
+    }
+
+    private String getNonEmptyInput(String prompt, boolean required) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine();
+            if (!input.isBlank() || !required) {
+                return input;
+            }
+            System.out.println("This field is mandatory.");
+        }
+    }
+
+    private int getValidId() {
+        while (true) {
             System.out.print("Enter the id: ");
-            String idInput = scanner.nextLine();
+            String input = scanner.nextLine();
             try {
-                id = Integer.parseInt(idInput);
+                return Integer.parseInt(input);
             } catch (NumberFormatException e) {
                 System.out.println("ID is not valid. Please enter a number.");
             }
         }
-        return new Song(id, name, author, album);
     }
+
 
 }

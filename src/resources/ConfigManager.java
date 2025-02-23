@@ -8,6 +8,9 @@ public class ConfigManager {
     private static final String CONFIG_FILE = "src/resources/config.properties";
     private static final Properties properties = new Properties();
 
+    private ConfigManager(){
+    }
+
     static {
         try (FileInputStream fis = new FileInputStream(CONFIG_FILE)) {
             properties.load(fis);
