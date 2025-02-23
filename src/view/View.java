@@ -11,10 +11,6 @@ public interface View {
 	int askObjectType();
 	
 	int askDataAccessType();
-	
-	String askFilePath();
-	
-	String askDatabase();
 
 	int dataActions();
 

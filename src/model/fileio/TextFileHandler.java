@@ -9,15 +9,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import resources.ConfigManager;
 import model.factory.ObjFactory;
 import model.interfaces.Identifiable;
 
 public class TextFileHandler<T extends Identifiable> extends FileHandler<Identifiable> {
 
-	private ObjFactory<Identifiable> factory;
+	private final ObjFactory<Identifiable> factory;
 
-	public TextFileHandler(File file, ObjFactory<Identifiable> factory) throws IOException {
-		super(file);
+	public TextFileHandler(String clazz, ObjFactory<Identifiable> factory) throws IOException {
+		super(new File(ConfigManager.getProperty("files.path") + clazz + ".txt"));
 		this.factory = factory;
 		this.map.putAll(initialReadObjects());
 	}
@@ -32,7 +33,7 @@ public class TextFileHandler<T extends Identifiable> extends FileHandler<Identif
 			String line;
 			while ((line = reader.readLine()) != null) {
 				Identifiable object = factory.create(line);
-				objectMap.put(((Identifiable) object).getId(), object);
+				objectMap.put(object.getId(), object);
 			}
 		} catch (IOException e) {
 			throw new IOException("Error reading object from file", e);

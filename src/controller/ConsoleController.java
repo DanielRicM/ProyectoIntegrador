@@ -76,18 +76,24 @@ public class ConsoleController {
         while (true) {
             switch (view.askDataAccessType()) {
                 case 1:
-                    return createDDBBHandler(view.askDatabase());
+                    return createMySQLHandler();
                 case 2:
-                    return createFileHandler(view.askFilePath());
+                    return createSQLiteHandler();
                 case 3:
-                    return createHibernateHandler();
+                    return createTextFileHandler();
                 case 4:
-                    return createJSONPHPHandler();
+                    return createXMLFileHandler();
                 case 5:
-                    return createOODBHandler();
+                    return createBinaryFileHandler();
                 case 6:
-                    return createBaseXHandler();
+                    return createHibernateHandler();
                 case 7:
+                    return createJSONPHPHandler();
+                case 8:
+                    return createOODBHandler();
+                case 9:
+                    return createBaseXHandler();
+                case 10:
                     return createMongoDBHandler();
                 default:
                     view.optionNotValid();
@@ -96,36 +102,38 @@ public class ConsoleController {
     }
 
     public void handleDataActions() {
-        switch (view.dataActions()) {
-            case 1:
-                viewAllObjects();
-                break;
-            case 2:
-                viewOneObject();
-                break;
-            case 3:
-                writeOneObject();
-                break;
-            case 4:
-                modifySingleObject();
-                break;
-            case 5:
-                deleteOneObject();
-                break;
-            case 6:
-                transferObjects();
-                break;
-            case 7:
-                try {
-                    dataHandler.close();
-                } catch (IOException e) {
-                    view.displayMessage("Error closing the access: " + e.getMessage());
-                }
-                view.displayMessage("Exiting...");
-                return;
-            default:
-                view.optionNotValid();
-                break;
+        while (true) {
+            switch (view.dataActions()) {
+                case 1:
+                    viewAllObjects();
+                    break;
+                case 2:
+                    viewOneObject();
+                    break;
+                case 3:
+                    writeOneObject();
+                    break;
+                case 4:
+                    modifySingleObject();
+                    break;
+                case 5:
+                    deleteOneObject();
+                    break;
+                case 6:
+                    transferObjects();
+                    break;
+                case 7:
+                    try {
+                        dataHandler.close();
+                    } catch (IOException e) {
+                        view.displayMessage("Error closing the access: " + e.getMessage());
+                    }
+                    view.displayMessage("Exiting...");
+                    return;
+                default:
+                    view.optionNotValid();
+                    break;
+            }
         }
     }
 
@@ -177,53 +185,54 @@ public class ConsoleController {
         secondDataHandler.writeObjects(map, false);
     }
 
-    public String getExtension(String filePath) {
-        String[] parts = filePath.split("\\.");
-        return parts[parts.length - 1];
-    }
-
-    private FileHandler<Identifiable> createFileHandler(String filePath) {
-        FileHandler<Identifiable> access;
-        String extension = getExtension(filePath);
+    private MySQLHandler<Identifiable> createMySQLHandler() {
         try {
-            switch (extension) {
-                case "txt":
-                    access = new TextFileHandler<>(new File(filePath), factory);
-                    return access;
-                case "dat", "bin":
-                    access = new BinaryFileHandler<>(new File(filePath));
-                    return access;
-                case "xml":
-                    access = new XMLFileHandler<>(new File(filePath), factory);
-                    return access;
-                default:
-                    //TODO: create custom exception
-                    throw new IOException("File type not supported: " + extension);
-            }
-        } catch (IOException ex) {
-            view.displayMessage("Error instantiating FileHandler: " + ex.getMessage());
-        }
-        return null;
-    }
-
-    private DDBBHandler<Identifiable> createDDBBHandler(String database) {
-        String databaseType = getExtension(database);
-        try {
-            if (databaseType.equals(database)) {
-                view.displayMessage("MySQLHandler Created");
-                return new MySQLHandler<>(database, factory, table);
-            } else if (databaseType.equals("db")) {
-                view.displayMessage("SQLiteHandler Created");
-                return new SQLiteHandler<>(database, factory, table);
-            } else {
-                throw new IOException("Database type not supported: " + databaseType);
-            }
+            view.displayMessage("Creating MySQLHandler...");
+            return new MySQLHandler<>(factory, table);
         } catch (ClassNotFoundException cnfe) {
             view.displayMessage("Class error: " + cnfe.getMessage());
         } catch (SQLException sqle) {
             view.displayMessage("SQL error: " + sqle.getMessage());
+        }
+        return null;
+    }
+
+    private SQLiteHandler<Identifiable> createSQLiteHandler() {
+        try {
+            view.displayMessage("SQLiteHandler Created");
+            return new SQLiteHandler<>(factory, table);
+        } catch (SQLException sqle) {
+            view.displayMessage("SQL error: " + sqle.getMessage());
+        }
+        return null;
+    }
+
+    private TextFileHandler<Identifiable> createTextFileHandler() {
+        try {
+            view.displayMessage("Creating TextFileHandler...");
+            return new TextFileHandler<>(clazz, factory);
         } catch (IOException ex) {
-            view.displayMessage("Error instantiating DDBBHandler: " + ex.getMessage());
+            view.displayMessage("Error instantiating TextFileHandler: " + ex.getMessage());
+        }
+        return null;
+    }
+
+    private XMLFileHandler<Identifiable> createXMLFileHandler() {
+        try {
+            view.displayMessage("Creating XMLFileHandler...");
+            return new XMLFileHandler<>(clazz, factory);
+        } catch (IOException ex) {
+            view.displayMessage("Error instantiating XMLFileHandler: " + ex.getMessage());
+        }
+        return null;
+    }
+
+    private BinaryFileHandler<Identifiable> createBinaryFileHandler() {
+        try {
+            view.displayMessage("Creating BinaryFileHandler...");
+            return new BinaryFileHandler<>(clazz);
+        } catch (IOException ex) {
+            view.displayMessage("Error instantiating BinaryFileHandler: " + ex.getMessage());
         }
         return null;
     }

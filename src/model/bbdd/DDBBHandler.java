@@ -20,12 +20,12 @@ public abstract class DDBBHandler<T extends Identifiable> implements DataHandler
 	protected ObjFactory<Identifiable> factory;
 	protected Statement stm;
 
-	public DDBBHandler(ObjFactory<Identifiable> factory, String table) throws ClassNotFoundException, SQLException {
+	protected DDBBHandler(ObjFactory<Identifiable> factory, String table){
 		this.table = table;
 		this.factory = factory;
 	}
 
-	protected abstract Connection getConnection(String database) throws ClassNotFoundException, SQLException;
+	protected abstract Connection getConnection() throws ClassNotFoundException, SQLException;
 
 	@Override
 	public Map<Integer, Identifiable> readObjects() {

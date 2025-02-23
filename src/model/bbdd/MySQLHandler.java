@@ -7,20 +7,19 @@ import java.sql.SQLException;
 import model.factory.ObjFactory;
 import model.interfaces.Identifiable;
 
-import main.resources.ConfigManager;
+import resources.ConfigManager;
 
 
 public class MySQLHandler<T extends Identifiable> extends DDBBHandler<Identifiable> {
 
-
-	public MySQLHandler(String database, ObjFactory<Identifiable> factory, String table) throws ClassNotFoundException, SQLException {
+	public MySQLHandler(ObjFactory<Identifiable> factory, String table) throws ClassNotFoundException, SQLException {
 		super(factory, table);
-		this.connection = getConnection(database);
+		this.connection = getConnection();
 		this.stm = connection.createStatement();
 	}
 
 	@Override
-	protected Connection getConnection(String database) throws ClassNotFoundException, SQLException {
+	protected Connection getConnection() throws ClassNotFoundException, SQLException {
 
 		String driver = ConfigManager.getProperty("mysql.driver");
 		String username = ConfigManager.getProperty("mysql.username");

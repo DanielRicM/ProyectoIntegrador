@@ -1,7 +1,6 @@
 package model.oodb;
 
-import com.mongodb.MongoClient;
-import main.resources.ConfigManager;
+import resources.ConfigManager;
 import model.interfaces.DataHandler;
 import model.interfaces.Identifiable;
 

@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mongodb.MongoClient;
-import main.resources.ConfigManager;
+import resources.ConfigManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -18,15 +17,16 @@ import model.interfaces.Identifiable;
 
 public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Identifiable>, Closeable {
 
-	private ApiRequests requests;
-	private String table;
-	private ObjFactory<Identifiable> factory;
-	private static final String SERVER_PATH = ConfigManager.getProperty("jsonphp.serverpath");
+	private final ApiRequests requests;
+	private final String table;
+	private final ObjFactory<Identifiable> factory;
+	private final String serverPath;
 
 
 	public JSONPHPHandler(String table, ObjFactory<Identifiable> factory) {
 		requests = new ApiRequests();
 		this.table = table;
+		serverPath = ConfigManager.getProperty("jsonphp.serverpath");
 		this.factory = factory;
 	}
 
@@ -35,7 +35,7 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 		Map<Integer, Identifiable> map = new HashMap<>();
 
 		try {
-			String url = SERVER_PATH + table + ".php";
+			String url = serverPath + table + ".php";
 			String response = requests.getRequest(url);
 			JSONObject answer = (JSONObject) JSONValue.parse(response.toString());
 
@@ -80,7 +80,7 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 	public Identifiable readObject(int id) {
 		Identifiable newObject;
 		try {
-			String url = SERVER_PATH + table + ".php?id=" + String.valueOf(id);
+			String url = serverPath + table + ".php?id=" + String.valueOf(id);
 
 			String response = requests.getRequest(url);
 			JSONObject answer = (JSONObject) JSONValue.parse(response.toString());
@@ -134,7 +134,7 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 		objPetition.put("objectAdd", list);
 
 		String json = objPetition.toJSONString();
-		String url = SERVER_PATH + table + ".php";
+		String url = serverPath + table + ".php";
 
 		String response;
 		try {
@@ -172,7 +172,7 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 			objPetition.put("objectAdd", list);
 
 			String json = objPetition.toJSONString();
-			String url = SERVER_PATH + table + ".php";
+			String url = serverPath + table + ".php";
 			String response = requests.postRequest(url, json);
 			JSONObject respuesta = (JSONObject) JSONValue.parse(response.toString());
 
@@ -202,7 +202,7 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 	public void deleteObject(int id) {
 		Identifiable newObject;
 		try {
-			String url = SERVER_PATH + table + ".php?id=" + String.valueOf(id);
+			String url = serverPath + table + ".php?id=" + String.valueOf(id);
 
 			String response = requests.deleteRequest(url);
 			JSONObject answer = (JSONObject) JSONValue.parse(response.toString());
@@ -236,7 +236,7 @@ public class JSONPHPHandler<T extends Identifiable> implements DataHandler<Ident
 			objPetition.put("objectAdd", list);
 
 			String json = objPetition.toJSONString();
-			String url = SERVER_PATH + table + ".php?id="+String.valueOf(id);
+			String url = serverPath + table + ".php?id="+String.valueOf(id);
 			String response = requests.putRequest(url, json);
 			JSONObject respuesta = (JSONObject) JSONValue.parse(response.toString());
 

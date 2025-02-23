@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import resources.ConfigManager;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
@@ -18,10 +19,10 @@ import model.interfaces.Identifiable;
 
 public class XMLFileHandler<T extends Identifiable> extends FileHandler<Identifiable> {
 
-	private ObjFactory<Identifiable> factory;
+	private final ObjFactory<Identifiable> factory;
 
-	public XMLFileHandler(File file, ObjFactory<Identifiable> factory) throws IOException {
-		super(file);
+	public XMLFileHandler(String clazz, ObjFactory<Identifiable> factory) throws IOException {
+		super(new File(ConfigManager.getProperty("files.path") + clazz + ".xml"));
 		this.factory = factory;
 		this.map.putAll(initialReadObjects());
 	}

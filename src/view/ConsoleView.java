@@ -28,20 +28,8 @@ public class ConsoleView implements View {
 
     @Override
     public int askDataAccessType() {
-        System.out.print("Select a data access type:\n1- Database\n2- File\n3- Hibernate\n4- Client/Server\n5- OODB\n6- BaseX\n7- MongoDB\nOption: ");
+        System.out.print("Select a data access type:\n1- MySQL\n2- SQLite\n3- Text File\n4- XML File\n5- Binary File\n6- Hibernate\n7- Client/Server\n8- OODB\n9- BaseX\n10- MongoDB\nOption: ");
         return Integer.parseInt(scanner.nextLine());
-    }
-
-    @Override
-    public String askFilePath() {
-        System.out.print("Enter the Filepath: ");
-        return scanner.nextLine();
-    }
-
-    @Override
-    public String askDatabase() {
-        System.out.print("Enter the Database name: ");
-        return scanner.nextLine();
     }
 
     @Override

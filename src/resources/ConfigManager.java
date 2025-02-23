@@ -1,11 +1,11 @@
-package main.resources;
+package resources;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
 public class ConfigManager {
-    private static final String CONFIG_FILE = "config.properties";
+    private static final String CONFIG_FILE = "src/resources/config.properties";
     private static final Properties properties = new Properties();
 
     static {

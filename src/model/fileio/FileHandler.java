@@ -13,9 +13,9 @@ public abstract class FileHandler<T extends Identifiable> implements DataHandler
 	protected final File file;
 	protected Map<Integer, Identifiable> map;
 
-	public FileHandler(File file) throws IOException {
+	protected FileHandler(File file) {
 		this.file = file;
-		this.map = new HashMap<>(); // This ensures the map is never null
+		this.map = new HashMap<>();
 	}
 	
 	protected abstract Map<Integer, Identifiable> initialReadObjects() throws IOException;
@@ -68,15 +68,7 @@ public abstract class FileHandler<T extends Identifiable> implements DataHandler
 		}
 	}
 
-	
 	public void close() throws IOException {
 		finalWriteObjects();
 	}
-
-	// Considerar implementar una forma de confirmar los cambios:
-	// private boolean changesConfirmed = false;
-	// ...close(){
-	// if(changesConfirmed) finalwriteObjects();
-	// }
-
 }
